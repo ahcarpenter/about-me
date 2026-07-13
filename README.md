@@ -1,32 +1,45 @@
-# Deploy Next.js to GitHub Pages
+# about-me
 
-This is a Next.js template which can be deployed to GitHub Pages as a static site.
+Personal site of [Andrew H. Carpenter](https://github.com/ahcarpenter) — built
+with Next.js (App Router, static export) and Tailwind CSS v4, deployed to
+GitHub Pages. Light-mode-only theme inspired by [conductor.build](https://conductor.build):
+warm cream paper, serif display type (Fraunces), terracotta accent.
 
-## Deploying to GitHub Pages
+## Pages
 
-1.  Create a new public GitHub repository
-1.  Edit `next.config.ts` to match your GitHub repository name:
-    - Given the pattern `https://github.com/<user>/<repo>`
-    - Update your `basePath` config to the name of your repo (e.g. `/repo`)
-1.  Push the starter code to the `main` branch
-1.  Run the `deploy` script (e.g. `npm run deploy`) to create the `gh-pages` branch
-1.  On GitHub, go to **Settings** > **Pages** > **Branch**, and choose `gh-pages` as the branch with the `/root` folder. Hit **Save**
-1.  Make a change
-1.  Run the `deploy` script again to push the changes to GitHub Pages
+- **/** — above-the-fold intro, a merged activity feed (GitHub · LinkedIn ·
+  Substack · reading), GitHub project highlights, latest Substack posts, and
+  LinkedIn recommendations.
+- **/philosophy** — principles.
+- **/story** — life story as a vertical timeline; dots mark each date/event
+  and descriptions fade in to the right as you scroll.
+- **/chat** — stubbed "chat with AI me" (canned responses for now).
 
-Congratulations! You should have a URL like:
+## Where the data comes from
+
+| Source | Mechanism |
+| --- | --- |
+| GitHub projects & activity | Fetched live in the browser from the public GitHub API |
+| Substack posts | Fetched from the RSS feed at **build time** — refreshed on every deploy, plus a weekly scheduled rebuild |
+| LinkedIn recommendations & activity | Curated by hand in [`data/linkedin.ts`](data/linkedin.ts) (LinkedIn has no public API for these) |
+| Recent articles read | Curated by hand in [`data/reading.ts`](data/reading.ts) |
+
+Entries flagged `sample: true` in the data files render with a small “sample”
+badge — replace them with real content and drop the flag.
+
+### Other knobs
+
+- [`lib/site.ts`](lib/site.ts) — name, tagline, profile URLs.
+- [`data/projects.ts`](data/projects.ts) — pin specific repos in the highlights
+  grid (defaults to most-starred).
+- [`data/timeline.ts`](data/timeline.ts) — life story events.
+
+## Develop
 
 ```bash
-https://<github-user-name>.github.io/<github-project-name>/
+npm install
+npm run dev    # http://localhost:3000
+npm run build  # static export to ./out
 ```
 
-For more information, see our [deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying/static-exports).
-
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+Pushing to `main` deploys via `.github/workflows/deploy.yml`.
