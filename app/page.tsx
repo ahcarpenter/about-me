@@ -3,7 +3,7 @@ import Reveal from "@/components/Reveal";
 import ActivityFeed from "@/components/ActivityFeed";
 import GithubHighlights from "@/components/GithubHighlights";
 import { getSubstackPosts, type SubstackPost } from "@/lib/substack";
-import { recommendations } from "@/data/linkedin";
+import { recommendations, type Recommendation } from "@/data/linkedin";
 import { site } from "@/lib/site";
 
 function formatDate(iso: string): string {
@@ -150,6 +150,49 @@ function WritingSection({ posts }: { posts: SubstackPost[] }) {
   );
 }
 
+function RecommendationCard({ rec }: { rec: Recommendation }) {
+  const inner = (
+    <>
+      <span aria-hidden className="display text-5xl leading-none text-accent">
+        “
+      </span>
+      <blockquote className="mt-1 whitespace-pre-line text-sm leading-relaxed text-soft">
+        {rec.quote}
+      </blockquote>
+      <figcaption className="mt-5 border-t border-line pt-4">
+        <p className="flex flex-wrap items-center gap-x-2 text-sm font-semibold text-ink">
+          <span className="group-hover:text-accent transition-colors">{rec.name}</span>
+          {rec.profileUrl && (
+            <span aria-hidden className="font-mono text-xs font-normal text-faint group-hover:text-accent">
+              ↗
+            </span>
+          )}
+          {rec.sample && <span className="chip font-normal">sample</span>}
+        </p>
+        <p className="mt-0.5 text-xs text-muted">
+          {rec.title}
+          {rec.relationship ? ` · ${rec.relationship}` : ""}
+        </p>
+      </figcaption>
+    </>
+  );
+
+  const className = "card group block break-inside-avoid px-6 py-6";
+  return rec.profileUrl ? (
+    <a
+      href={rec.profileUrl}
+      target="_blank"
+      rel="noopener noreferrer"
+      className={className}
+      aria-label={`View ${rec.name}’s LinkedIn profile`}
+    >
+      {inner}
+    </a>
+  ) : (
+    <figure className={className}>{inner}</figure>
+  );
+}
+
 function RecommendationsSection() {
   return (
     <section className="mx-auto max-w-5xl px-5 pt-20" id="kind-words">
@@ -169,26 +212,14 @@ function RecommendationsSection() {
         />
       </Reveal>
 
-      <div className="mt-8 grid gap-4 md:grid-cols-3">
+      <div className="mt-8 gap-4 sm:columns-2 lg:columns-3">
         {recommendations.map((rec, i) => (
-          <Reveal key={rec.name} delay={i * 90}>
-            <figure className="card flex h-full flex-col px-6 py-6">
-              <span aria-hidden className="display text-5xl leading-none text-accent">
-                “
-              </span>
-              <blockquote className="mt-1 flex-1 text-sm leading-relaxed text-soft">
-                {rec.quote}
-              </blockquote>
-              <figcaption className="mt-5 border-t border-line pt-4">
-                <p className="text-sm font-semibold text-ink">
-                  {rec.name}
-                  {rec.sample && <span className="chip ml-2 align-middle">sample</span>}
-                </p>
-                <p className="mt-0.5 text-xs text-muted">
-                  {rec.title} · {rec.relationship}
-                </p>
-              </figcaption>
-            </figure>
+          <Reveal
+            key={rec.name}
+            delay={Math.min(i, 3) * 80}
+            className="reveal mb-4 break-inside-avoid"
+          >
+            <RecommendationCard rec={rec} />
           </Reveal>
         ))}
       </div>
