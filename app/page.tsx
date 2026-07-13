@@ -3,8 +3,9 @@ import Reveal from "@/components/Reveal";
 import ActivityFeed from "@/components/ActivityFeed";
 import GithubHighlights from "@/components/GithubHighlights";
 import { getSubstackPosts, type SubstackPost } from "@/lib/substack";
+import { getRepoHighlights } from "@/lib/repos";
 import { recommendations, type Recommendation } from "@/data/linkedin";
-import { recommenderAvatars } from "@/data/avatars";
+import { portrait, recommenderAvatars } from "@/data/avatars";
 import { site } from "@/lib/site";
 import { formatDate } from "@/lib/format";
 
@@ -72,10 +73,11 @@ function Hero() {
         <div className="card relative overflow-hidden rounded-2xl p-2">
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
-            src={site.avatarUrl}
+            src={portrait.src}
             alt={`Portrait of ${site.name}`}
             width={320}
             height={320}
+            fetchPriority="high"
             className="aspect-square w-full rounded-lg bg-paper object-cover outline -outline-offset-1 outline-black/10"
           />
           <p className="px-2 pb-1 pt-2 text-center font-mono text-[0.65rem] tracking-widest text-faint">
@@ -162,6 +164,8 @@ function RecommendationCard({ rec }: { rec: Recommendation }) {
             alt=""
             width={40}
             height={40}
+            loading="lazy"
+            decoding="async"
             className="h-10 w-10 shrink-0 rounded-full object-cover outline -outline-offset-1 outline-black/10"
           />
         )}
@@ -235,7 +239,7 @@ function RecommendationsSection() {
 }
 
 export default async function Home() {
-  const posts = await getSubstackPosts();
+  const [posts, repos] = await Promise.all([getSubstackPosts(), getRepoHighlights()]);
 
   return (
     <div className="pb-8">
@@ -278,7 +282,7 @@ export default async function Home() {
         </Reveal>
         <Reveal delay={120}>
           <div className="mt-8">
-            <GithubHighlights />
+            <GithubHighlights repos={repos} />
           </div>
         </Reveal>
       </section>

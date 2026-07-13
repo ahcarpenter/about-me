@@ -1,10 +1,5 @@
-"use client";
-
-import { useMemo } from "react";
 import { site } from "@/lib/site";
-import { pinnedRepos, highlightCount } from "@/data/projects";
-import { pickHighlights, type Repo } from "@/lib/github";
-import { useGithubApi } from "@/lib/useGithubApi";
+import type { Repo } from "@/lib/github";
 
 const LANGUAGE_COLORS: Record<string, string> = {
   TypeScript: "#3178c6",
@@ -25,20 +20,17 @@ const LANGUAGE_COLORS: Record<string, string> = {
   Elixir: "#6e4a7e",
 };
 
-export default function GithubHighlights() {
-  const { data, failed } = useGithubApi<Repo[]>(
-    `/users/${site.githubUsername}/repos?per_page=100&sort=pushed`,
-  );
-  const repos = useMemo(
-    () => (data === null ? null : pickHighlights(data, pinnedRepos, highlightCount)),
-    [data],
-  );
-
-  if (failed) {
+/**
+ * Repo highlight cards, pre-rendered from data fetched at build time
+ * (see lib/repos.ts). An empty list means the API was unreachable during
+ * the build or there was nothing to show — either way, link out.
+ */
+export default function GithubHighlights({ repos }: { repos: Repo[] }) {
+  if (repos.length === 0) {
     return (
       <a href={site.githubUrl} target="_blank" rel="noopener noreferrer" className="card block px-6 py-8 text-center">
         <p className="text-sm text-muted">
-          Couldn’t reach the GitHub API just now — browse everything at{" "}
+          Nothing to highlight just now — browse everything at{" "}
           <span className="font-medium text-accent">github.com/{site.githubUsername} ↗</span>
         </p>
       </a>
@@ -47,17 +39,7 @@ export default function GithubHighlights() {
 
   return (
     <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-      {repos === null &&
-        Array.from({ length: highlightCount }).map((_, i) => (
-          <div key={i} className="card animate-pulse px-5 py-5">
-            <div className="h-4 w-2/3 rounded bg-line" />
-            <div className="mt-3 h-3 w-full rounded bg-line" />
-            <div className="mt-2 h-3 w-4/5 rounded bg-line" />
-            <div className="mt-5 h-3 w-1/3 rounded bg-line" />
-          </div>
-        ))}
-
-      {repos?.map((repo) => (
+      {repos.map((repo) => (
         <a
           key={repo.name}
           href={repo.html_url}
@@ -87,17 +69,6 @@ export default function GithubHighlights() {
           </div>
         </a>
       ))}
-
-      {repos !== null && repos.length === 0 && (
-        <a
-          href={site.githubUrl}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="card px-6 py-8 text-center text-sm text-muted sm:col-span-2 lg:col-span-3"
-        >
-          Nothing to highlight yet — see github.com/{site.githubUsername} ↗
-        </a>
-      )}
     </div>
   );
 }

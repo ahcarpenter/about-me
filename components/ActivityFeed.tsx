@@ -26,6 +26,9 @@ const SOURCE_META: Record<Source, { label: string; dot: string }> = {
   reading: { label: "Reading", dot: "var(--color-gold)" },
 };
 
+/** Cap on merged feed items; the skeleton matches so content doesn't jump when it lands. */
+const FEED_LIMIT = 14;
+
 const FILTERS: Array<{ key: Source | "all"; label: string }> = [
   { key: "all", label: "Everything" },
   { key: "github", label: "GitHub" },
@@ -69,7 +72,7 @@ export default function ActivityFeed({ substackPosts }: { substackPosts: Substac
     return [...githubItems, ...substackItems, ...linkedinItems, ...readingItems]
       .filter((i) => i.date)
       .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
-      .slice(0, 14);
+      .slice(0, FEED_LIMIT);
   }, [events, substackPosts]);
 
   const visible = filter === "all" ? items : items.filter((i) => i.source === filter);
@@ -95,7 +98,7 @@ export default function ActivityFeed({ substackPosts }: { substackPosts: Substac
 
       <ul className="card mt-5 divide-y divide-line overflow-hidden">
         {loading &&
-          Array.from({ length: 5 }).map((_, i) => (
+          Array.from({ length: FEED_LIMIT }).map((_, i) => (
             <li key={i} className="flex animate-pulse items-center gap-4 px-5 py-4">
               <span className="h-2 w-2 rounded-full bg-line" />
               <span className="h-3 flex-1 rounded bg-line" />
