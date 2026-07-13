@@ -3,6 +3,7 @@ import { Fraunces, Inter, IBM_Plex_Mono } from "next/font/google";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import { site } from "@/lib/site";
+import { portrait } from "@/data/avatars";
 import "./globals.css";
 
 const fraunces = Fraunces({
@@ -34,7 +35,7 @@ export const metadata: Metadata = {
   openGraph: {
     siteName: site.shortName,
     type: "website",
-    images: [{ url: site.avatarUrl, width: 320, height: 320, alt: `Portrait of ${site.name}` }],
+    images: [{ url: portrait.src, width: 320, height: 320, alt: `Portrait of ${site.name}` }],
   },
   twitter: {
     card: "summary",

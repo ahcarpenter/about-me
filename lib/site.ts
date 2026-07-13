@@ -17,7 +17,4 @@ export const site = {
   substackUrl: "https://ahcarpenter.substack.com",
   substackProfileUrl: "https://substack.com/@ahcarpenter",
   keybaseUrl: "https://keybase.io/ahcarpenter",
-
-  /** Rendered avatar; GitHub serves this for any account. */
-  avatarUrl: "https://github.com/ahcarpenter.png?size=320",
 } as const;
