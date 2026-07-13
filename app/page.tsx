@@ -6,12 +6,7 @@ import { getSubstackPosts, type SubstackPost } from "@/lib/substack";
 import { recommendations, type Recommendation } from "@/data/linkedin";
 import { recommenderAvatars } from "@/data/avatars";
 import { site } from "@/lib/site";
-
-function formatDate(iso: string): string {
-  const d = new Date(iso);
-  if (Number.isNaN(d.getTime())) return "";
-  return d.toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" });
-}
+import { formatDate } from "@/lib/format";
 
 function SectionHeader({
   kicker,
@@ -150,6 +145,7 @@ function WritingSection({ posts }: { posts: SubstackPost[] }) {
 }
 
 function RecommendationCard({ rec }: { rec: Recommendation }) {
+  const avatar = rec.profileUrl ? recommenderAvatars[rec.profileUrl] : undefined;
   const inner = (
     <>
       <span aria-hidden className="display text-5xl leading-none text-accent">
@@ -159,10 +155,10 @@ function RecommendationCard({ rec }: { rec: Recommendation }) {
         {rec.quote}
       </blockquote>
       <figcaption className="mt-5 flex items-center gap-3 border-t border-line pt-4">
-        {recommenderAvatars[rec.name] && (
+        {avatar && (
           /* eslint-disable-next-line @next/next/no-img-element */
           <img
-            src={recommenderAvatars[rec.name].src}
+            src={avatar.src}
             alt=""
             width={40}
             height={40}
