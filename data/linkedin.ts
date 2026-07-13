@@ -31,30 +31,45 @@ export type LinkedInActivity = {
   sample?: boolean;
 };
 
+// Real recommendations received on https://www.linkedin.com/in/andrewhcarpenter
+// (Profile → Recommendations, "All LinkedIn members" visibility). Ordered
+// newest first. Each quote is an excerpt of the opening sentences — see the
+// full text on LinkedIn.
 export const recommendations: Recommendation[] = [
   {
     quote:
-      "Andrew is the rare engineer who cares as much about why something is being built as how. He asks the question that reframes the whole project — then quietly ships the thing.",
-    name: "Jane Doe",
-    title: "Engineering Manager",
+      "I had a chance to work with Drew as part of the Acquisitions team at Frontdoor. He was always positive and a willing participant in discussions. He was also a valuable asset in assisting others on the team by pairing up to find solutions.",
+    name: "John Chaffier",
+    title: "Software Architect & Technical Leader",
+    relationship: "Was senior to Andrew",
+  },
+  {
+    quote:
+      "Drew is a joy to work with, and uniquely gifted in his knowledge of software architecture. He has deep fluency in different design patterns and programming paradigms.",
+    name: "Christian Hughes",
+    title: "Senior Software Engineer, Dropbox",
+    relationship: "Worked with Andrew on a different team",
+  },
+  {
+    quote:
+      "Possibly the most positive person I have ever spent extended time with is what comes to mind when I think about Drew. I've had the pleasure of knowing Drew for a few years, during which we worked as peers on several projects and eventually I had the pleasure of serving as Drew's manager.",
+    name: "Rick Peyton",
+    title: "Chief Technology Officer, PrintsWell",
     relationship: "Managed Andrew directly",
-    sample: true,
   },
   {
     quote:
-      "Every team has someone people go to when they're stuck. On ours, that was Andrew. Generous with his time, allergic to hand-waving, and unreasonably good at naming things.",
-    name: "John Smith",
-    title: "Staff Engineer",
+      "Drew is passionate about Ruby on Rails and the Ruby language in general. His attention to detail and continuous attention to code quality are second to none. When working with Drew, I was often impressed with the kinds of questions he would ask.",
+    name: "Patrick Taylor",
+    title: "Senior Software Engineer, AI Engineering Lead",
     relationship: "Worked with Andrew on the same team",
-    sample: true,
   },
   {
     quote:
-      "Andrew turned a vague idea into a working product faster than I thought possible, and explained every trade-off along the way in plain English.",
-    name: "Alex Roe",
-    title: "Product Lead",
-    relationship: "Was Andrew's stakeholder",
-    sample: true,
+      "Andrew has a solid background in IT knowledge from the University of Transylvania Lexington. That is why he designed solid database models instead of dumping everything in one table. He is extremely fast in adopting to new techniques because he loves his job.",
+    name: "Ronaldus van Uden",
+    title: "Software Engineer",
+    relationship: "Worked with Andrew on a different team",
   },
 ];
 
