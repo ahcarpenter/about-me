@@ -4,6 +4,7 @@ import ActivityFeed from "@/components/ActivityFeed";
 import GithubHighlights from "@/components/GithubHighlights";
 import { getSubstackPosts, type SubstackPost } from "@/lib/substack";
 import { recommendations, type Recommendation } from "@/data/linkedin";
+import { recommenderAvatars } from "@/data/avatars";
 import { site } from "@/lib/site";
 
 function formatDate(iso: string): string {
@@ -159,20 +160,32 @@ function RecommendationCard({ rec }: { rec: Recommendation }) {
       <blockquote className="mt-1 whitespace-pre-line text-sm leading-relaxed text-soft">
         {rec.quote}
       </blockquote>
-      <figcaption className="mt-5 border-t border-line pt-4">
-        <p className="flex flex-wrap items-center gap-x-2 text-sm font-semibold text-ink">
-          <span className="group-hover:text-accent transition-colors">{rec.name}</span>
-          {rec.profileUrl && (
-            <span aria-hidden className="font-mono text-xs font-normal text-faint group-hover:text-accent">
-              ↗
-            </span>
-          )}
-          {rec.sample && <span className="chip font-normal">sample</span>}
-        </p>
-        <p className="mt-0.5 text-xs text-muted">
-          {rec.title}
-          {rec.relationship ? ` · ${rec.relationship}` : ""}
-        </p>
+      <figcaption className="mt-5 flex items-center gap-3 border-t border-line pt-4">
+        {recommenderAvatars[rec.name] && (
+          /* eslint-disable-next-line @next/next/no-img-element */
+          <img
+            src={recommenderAvatars[rec.name].src}
+            alt=""
+            width={40}
+            height={40}
+            className="h-10 w-10 shrink-0 rounded-full border border-line object-cover"
+          />
+        )}
+        <span className="min-w-0">
+          <span className="flex flex-wrap items-center gap-x-2 text-sm font-semibold text-ink">
+            <span className="group-hover:text-accent transition-colors">{rec.name}</span>
+            {rec.profileUrl && (
+              <span aria-hidden className="font-mono text-xs font-normal text-faint group-hover:text-accent">
+                ↗
+              </span>
+            )}
+            {rec.sample && <span className="chip font-normal">sample</span>}
+          </span>
+          <span className="mt-0.5 block text-xs text-muted">
+            {rec.title}
+            {rec.relationship ? ` · ${rec.relationship}` : ""}
+          </span>
+        </span>
       </figcaption>
     </>
   );
