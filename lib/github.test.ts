@@ -28,6 +28,15 @@ describe("describeGithubEvent", () => {
     ).toBe("Pushed 2 commits to u/repo");
   });
 
+  it("falls back to countless phrasing when the payload omits commits", () => {
+    expect(describeGithubEvent({ ...base, type: "PushEvent", payload: {} })?.title).toBe(
+      "Pushed to u/repo",
+    );
+    expect(describeGithubEvent({ ...base, type: "PushEvent", payload: { size: 3 } })?.title).toBe(
+      "Pushed 3 commits to u/repo",
+    );
+  });
+
   it("describes repository and branch creation, skips tags", () => {
     expect(
       describeGithubEvent({ ...base, type: "CreateEvent", payload: { ref_type: "repository" } })

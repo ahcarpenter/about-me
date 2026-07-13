@@ -1,5 +1,5 @@
 /**
- * Pure helpers for the GitHub REST data the site fetches client-side.
+ * Pure helpers for the GitHub REST data the site fetches at build time.
  * Kept free of React so they can be unit-tested directly.
  */
 
@@ -22,6 +22,7 @@ export type GithubEvent = {
   repo?: { name?: string };
   payload?: {
     commits?: unknown[];
+    size?: number;
     ref?: string;
     ref_type?: string;
     action?: string;
@@ -44,7 +45,10 @@ export function describeGithubEvent(ev: GithubEvent): GithubFeedItem | null {
   const base = { date: ev.created_at ?? "", url: repoUrl };
   switch (ev.type) {
     case "PushEvent": {
-      const n = ev.payload?.commits?.length ?? 0;
+      // Unauthenticated event payloads no longer include `commits` (or `size`),
+      // so fall back to a countless phrasing rather than "Pushed 0 commits".
+      const n = ev.payload?.commits?.length ?? ev.payload?.size;
+      if (typeof n !== "number" || n === 0) return { ...base, title: `Pushed to ${repo}` };
       return { ...base, title: `Pushed ${n} commit${n === 1 ? "" : "s"} to ${repo}` };
     }
     case "CreateEvent":
