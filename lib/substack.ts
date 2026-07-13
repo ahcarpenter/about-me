@@ -6,29 +6,36 @@ export type SubstackPost = {
   /** ISO date string. */
   date: string;
   excerpt: string;
-  image?: string;
 };
 
 const FEED_URL = `${site.substackUrl}/feed`;
 
 /** Pull a single tag's inner text, unwrapping CDATA. */
-function tag(block: string, name: string): string {
+export function tag(block: string, name: string): string {
   const m = block.match(new RegExp(`<${name}[^>]*>([\\s\\S]*?)</${name}>`, "i"));
   if (!m) return "";
   return m[1].replace(/^\s*<!\[CDATA\[([\s\S]*?)\]\]>\s*$/, "$1").trim();
 }
 
-function stripHtml(html: string): string {
+export function stripHtml(html: string): string {
   return html
     .replace(/<[^>]+>/g, " ")
     .replace(/&amp;/g, "&")
     .replace(/&lt;/g, "<")
     .replace(/&gt;/g, ">")
     .replace(/&quot;/g, '"')
-    .replace(/&#(\d+);/g, (_, n) => String.fromCharCode(Number(n)))
+    .replace(/&#x([0-9a-f]+);/gi, (_, n) => String.fromCodePoint(parseInt(n, 16)))
+    .replace(/&#(\d+);/g, (_, n) => String.fromCodePoint(Number(n)))
     .replace(/&nbsp;/g, " ")
     .replace(/\s+/g, " ")
     .trim();
+}
+
+/** Truncate by code point so astral characters (emoji, etc.) never split. */
+export function truncate(text: string, max: number): string {
+  const points = [...text];
+  if (points.length <= max) return text;
+  return `${points.slice(0, max - 1).join("")}…`;
 }
 
 /**
@@ -41,6 +48,8 @@ function stripHtml(html: string): string {
 export async function getSubstackPosts(limit = 6): Promise<SubstackPost[]> {
   try {
     const res = await fetch(FEED_URL, {
+      // Don't let a hung feed hang the deploy — fail fast and fall back.
+      signal: AbortSignal.timeout(10_000),
       headers: {
         "user-agent":
           "Mozilla/5.0 (compatible; about-me-site/1.0; +" + site.githubUrl + ")",
@@ -54,14 +63,11 @@ export async function getSubstackPosts(limit = 6): Promise<SubstackPost[]> {
     const posts = items.slice(0, limit).map((item): SubstackPost => {
       const pubDate = tag(item, "pubDate");
       const description = stripHtml(tag(item, "description"));
-      const image = item.match(/<enclosure[^>]*url="([^"]+)"/i)?.[1];
       return {
         title: stripHtml(tag(item, "title")),
         link: tag(item, "link"),
         date: pubDate ? new Date(pubDate).toISOString() : "",
-        excerpt:
-          description.length > 220 ? `${description.slice(0, 217)}…` : description,
-        image,
+        excerpt: truncate(description, 220),
       };
     });
     return posts.filter((p) => p.title && p.link);
