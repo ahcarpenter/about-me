@@ -7,6 +7,9 @@ export const site = {
   description:
     "Personal site of Andrew H. Carpenter — what I'm building, writing, reading, and thinking about.",
 
+  /** Canonical deployed URL (GitHub Pages project site). */
+  url: "https://ahcarpenter.github.io/about/",
+
   githubUsername: "ahcarpenter",
   githubUrl: "https://github.com/ahcarpenter",
   linkedinUrl: "https://www.linkedin.com/in/andrewhcarpenter",
