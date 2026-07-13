@@ -8,13 +8,13 @@ type Message = { role: "me" | "bot"; text: string };
 /**
  * Stubbed "chat with AI me" — canned responses only. Swap `reply()` for a
  * real model call (e.g. an API route on a server deployment, or a hosted
- * endpoint) when the AI version of Drew is ready.
+ * endpoint) when the AI version of Andrew is ready.
  */
 const CANNED: string[] = [
-  "Good question. The honest answer: I'm a stub. The real AI-Drew is still in training — for now I only know how to say charming placeholder things.",
-  "If I were the real Drew, I'd probably answer with a story, a strong opinion, and a link to something he wrote. Soon.",
+  "Good question. The honest answer: I'm a stub. The real AI-Andrew is still in training — for now I only know how to say charming placeholder things.",
+  "If I were the real Andrew, I'd probably answer with a story, a strong opinion, and a link to something he wrote. Soon.",
   "I've noted that down for the actual AI version of me. In the meantime, the Philosophy and Story pages are the closest thing to my brain in text form.",
-  "Ask me again after my weights arrive. Until then: yes, Drew really does think writing is thinking.",
+  "Ask me again after my weights arrive. Until then: yes, Andrew really does think writing is thinking.",
   "That's beyond my canned repertoire — but the human me reads everything sent through LinkedIn or Substack, and he's friendlier than average.",
 ];
 

@@ -1,8 +1,8 @@
 /** Central place for identity + external profile links. */
 export const site = {
   name: "Andrew H. Carpenter",
-  shortName: "Drew Carpenter",
-  firstName: "Drew",
+  shortName: "Andrew Carpenter",
+  firstName: "Andrew",
   tagline: "Builder of software, collector of ideas.",
   description:
     "Personal site of Andrew H. Carpenter — what I'm building, writing, reading, and thinking about.",
