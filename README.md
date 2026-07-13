@@ -1,4 +1,4 @@
-# about-me
+# about
 
 Personal site of [Andrew H. Carpenter](https://github.com/ahcarpenter) — built
 with Next.js (App Router, static export) and Tailwind CSS v4, deployed to
