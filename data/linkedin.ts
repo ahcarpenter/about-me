@@ -37,10 +37,6 @@ export type LinkedInActivity = {
 // Real recommendations received on https://www.linkedin.com/in/andrewhcarpenter
 // (Profile → Recommendations, "All LinkedIn members" visibility), full text,
 // ordered newest first.
-//
-// profileUrl currently points at a LinkedIn people-search for each name so the
-// card is clickable today. Replace each with the recommender's exact profile
-// URL (e.g. https://www.linkedin.com/in/their-vanity-name) for a direct link.
 export const recommendations: Recommendation[] = [
   {
     quote:
@@ -48,7 +44,7 @@ export const recommendations: Recommendation[] = [
     name: "John Chaffier",
     title: "Software Architect & Technical Leader",
     relationship: "Was senior to Andrew",
-    profileUrl: "https://www.linkedin.com/search/results/people/?keywords=John%20Chaffier",
+    profileUrl: "https://www.linkedin.com/in/jchaffier",
   },
   {
     quote:
@@ -56,7 +52,7 @@ export const recommendations: Recommendation[] = [
     name: "Christian Hughes",
     title: "Senior Software Engineer, Dropbox",
     relationship: "Worked with Andrew on a different team",
-    profileUrl: "https://www.linkedin.com/search/results/people/?keywords=Christian%20Hughes",
+    profileUrl: "https://www.linkedin.com/in/christianjhughes",
   },
   {
     quote:
@@ -64,7 +60,7 @@ export const recommendations: Recommendation[] = [
     name: "Rick Peyton",
     title: "Chief Technology Officer, PrintsWell",
     relationship: "Managed Andrew directly",
-    profileUrl: "https://www.linkedin.com/search/results/people/?keywords=Rick%20Peyton",
+    profileUrl: "https://www.linkedin.com/in/rickpeyton",
   },
   {
     quote:
@@ -72,7 +68,7 @@ export const recommendations: Recommendation[] = [
     name: "Patrick Taylor",
     title: "Senior Software Engineer, AI Engineering Lead",
     relationship: "Worked with Andrew on the same team",
-    profileUrl: "https://www.linkedin.com/search/results/people/?keywords=Patrick%20Taylor",
+    profileUrl: "https://www.linkedin.com/in/pstaylor-patrick",
   },
   {
     quote:
@@ -80,7 +76,7 @@ export const recommendations: Recommendation[] = [
     name: "Ronaldus van Uden",
     title: "Software Engineer",
     relationship: "Worked with Andrew on a different team",
-    profileUrl: "https://www.linkedin.com/search/results/people/?keywords=Ronaldus%20van%20Uden",
+    profileUrl: "https://www.linkedin.com/in/ronaldus",
   },
 ];
 
