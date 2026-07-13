@@ -169,13 +169,21 @@
     color: var(--color-muted);
   }
 
-  /* Scroll-reveal primitives */
+  /*
+    Scroll-reveal primitives. Content ships visible in the static HTML; the
+    inline script in layout.tsx adds `js` to <html>, and only then do these
+    opt into the hidden pre-reveal state — so no-JS visitors (and crawlers)
+    still see everything.
+  */
   .reveal {
-    opacity: 0;
-    transform: translateY(14px);
     transition: opacity 650ms cubic-bezier(0.22, 1, 0.36, 1),
       transform 650ms cubic-bezier(0.22, 1, 0.36, 1);
     transition-delay: var(--reveal-delay, 0ms);
+  }
+
+  .js .reveal {
+    opacity: 0;
+    transform: translateY(14px);
   }
 
   .reveal.is-visible {
@@ -185,23 +193,32 @@
 
   /* Timeline reveals: dot pops, description fades in to the right of the dot */
   .tl-dot {
-    transform: scale(0.3);
-    opacity: 0;
     transition: transform 500ms cubic-bezier(0.34, 1.56, 0.64, 1), opacity 400ms ease;
   }
 
   .tl-head {
-    opacity: 0;
-    transform: translateX(-10px);
     transition: opacity 550ms ease, transform 550ms cubic-bezier(0.22, 1, 0.36, 1);
     transition-delay: 120ms;
   }
 
   .tl-body {
-    opacity: 0;
-    transform: translateX(24px);
     transition: opacity 700ms ease, transform 700ms cubic-bezier(0.22, 1, 0.36, 1);
     transition-delay: 240ms;
+  }
+
+  .js .tl-dot {
+    transform: scale(0.3);
+    opacity: 0;
+  }
+
+  .js .tl-head {
+    opacity: 0;
+    transform: translateX(-10px);
+  }
+
+  .js .tl-body {
+    opacity: 0;
+    transform: translateX(24px);
   }
 
   .tl-item.is-visible .tl-dot {

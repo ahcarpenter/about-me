@@ -54,8 +54,28 @@ export default function RootLayout({
     <html
       lang="en"
       className={`${fraunces.variable} ${inter.variable} ${plexMono.variable}`}
+      suppressHydrationWarning
     >
       <body className="grain flex min-h-screen flex-col">
+        {/*
+          Runs before the rest of the body parses. Reveal animations hide
+          content only under `html.js` (see globals.css), so no-JS visitors
+          get everything visible instead of a blank page.
+        */}
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `document.documentElement.classList.add("js")`,
+          }}
+        />
+        {/* Fully static 4-page site: prerender internal navigations on hover/visibility. */}
+        <script
+          type="speculationrules"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify({
+              prerender: [{ where: { href_matches: "/*" }, eagerness: "moderate" }],
+            }),
+          }}
+        />
         <Header />
         <main className="flex-1">{children}</main>
         <Footer />
