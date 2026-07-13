@@ -41,9 +41,7 @@ function Hero() {
           Andrew <em>Carpenter</em>
         </h1>
         <p className="mt-6 max-w-xl text-lg leading-relaxed text-soft">
-          {site.tagline} I spend my days shipping things, writing about what I
-          learn along the way, and chasing the occasional idea further than is
-          strictly sensible. This site is the running record — live from{" "}
+          {site.tagline} This is the running record — live from{" "}
           <a href={site.githubUrl} className="font-medium text-accent hover:text-accent-deep" target="_blank" rel="noopener noreferrer">
             GitHub
           </a>
