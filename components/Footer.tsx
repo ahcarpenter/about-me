@@ -32,12 +32,12 @@ export default function Footer() {
 
         <div>
           <p className="kicker">Pages</p>
-          <ul className="mt-3 space-y-2">
+          <ul className="mt-1">
             {pages.map((p) => (
               <li key={p.href}>
                 <Link
                   href={p.href}
-                  className="text-sm text-soft transition-colors hover:text-accent"
+                  className="inline-block py-2.5 text-sm text-soft transition-colors hover:text-accent"
                 >
                   {p.label}
                 </Link>
@@ -48,14 +48,14 @@ export default function Footer() {
 
         <div>
           <p className="kicker">Elsewhere</p>
-          <ul className="mt-3 space-y-2">
+          <ul className="mt-1">
             {elsewhere.map((e) => (
               <li key={e.href}>
                 <a
                   href={e.href}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="text-sm text-soft transition-colors hover:text-accent"
+                  className="inline-block py-2.5 text-sm text-soft transition-colors hover:text-accent"
                 >
                   {e.label} ↗
                 </a>

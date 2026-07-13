@@ -35,7 +35,7 @@ export default function Header() {
             <Link
               key={l.href}
               href={l.href}
-              className={`rounded-full px-3 py-1.5 text-sm font-medium transition-colors ${
+              className={`relative rounded-full px-3 py-1.5 text-sm font-medium transition-colors before:absolute before:inset-x-0 before:-inset-y-1 before:content-[''] ${
                 isActive(l.href)
                   ? "bg-accent-soft text-accent-deep"
                   : "text-soft hover:bg-surface hover:text-ink"
@@ -44,7 +44,10 @@ export default function Header() {
               {l.label}
             </Link>
           ))}
-          <Link href="/chat/" className="btn btn-primary ml-1 px-4 py-1.5 text-sm">
+          <Link
+            href="/chat/"
+            className="btn btn-primary relative ml-1 px-4 py-1.5 text-sm before:absolute before:inset-x-0 before:-inset-y-1 before:content-['']"
+          >
             <span className="sm:hidden">Chat</span>
             <span className="hidden sm:inline">Chat with me</span>
           </Link>

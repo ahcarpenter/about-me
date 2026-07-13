@@ -60,7 +60,7 @@ function Hero() {
           </Link>
           <Link
             href="/chat/"
-            className="px-2 py-1 text-sm font-medium text-muted transition-colors hover:text-accent"
+            className="px-2 py-2.5 text-sm font-medium text-muted transition-colors hover:text-accent"
           >
             or just ask me →
           </Link>
@@ -76,7 +76,7 @@ function Hero() {
             alt={`Portrait of ${site.name}`}
             width={320}
             height={320}
-            className="aspect-square w-full rounded-xl bg-paper object-cover"
+            className="aspect-square w-full rounded-lg bg-paper object-cover outline -outline-offset-1 outline-black/10"
           />
           <p className="px-2 pb-1 pt-2 text-center font-mono text-[0.65rem] tracking-widest text-faint">
             EST. SOMEWHERE — STILL SHIPPING
@@ -162,7 +162,7 @@ function RecommendationCard({ rec }: { rec: Recommendation }) {
             alt=""
             width={40}
             height={40}
-            className="h-10 w-10 shrink-0 rounded-full border border-line object-cover"
+            className="h-10 w-10 shrink-0 rounded-full object-cover outline -outline-offset-1 outline-black/10"
           />
         )}
         <span className="min-w-0">
