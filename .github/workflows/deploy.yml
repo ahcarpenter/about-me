@@ -33,7 +33,7 @@ jobs:
           node-version: "22"
           cache: npm
       - name: Setup Pages
-        uses: actions/configure-pages@v5
+        uses: actions/configure-pages@v6
         with:
           # Injects basePath when the site is served from a project subpath.
           static_site_generator: next
