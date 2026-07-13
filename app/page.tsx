@@ -4,9 +4,8 @@ import ActivityFeed from "@/components/ActivityFeed";
 import GithubHighlights from "@/components/GithubHighlights";
 import { getSubstackPosts, type SubstackPost } from "@/lib/substack";
 import { getRepoHighlights } from "@/lib/repos";
-import { getGithubEvents } from "@/lib/events";
 import { recommendations, type Recommendation } from "@/data/linkedin";
-import { portrait, portraitAvifSrcSet, recommenderAvatars } from "@/data/avatars";
+import { portrait, recommenderAvatars } from "@/data/avatars";
 import { site } from "@/lib/site";
 import { formatDate } from "@/lib/format";
 
@@ -72,17 +71,15 @@ function Hero() {
       <div className="relative mx-auto w-56 sm:w-64 md:w-full md:max-w-[280px]">
         <div aria-hidden className="absolute inset-0 translate-x-3 translate-y-3 rounded-2xl border border-line-strong bg-paper" />
         <div className="card relative overflow-hidden rounded-2xl p-2">
-          <picture>
-            <source type="image/avif" srcSet={portraitAvifSrcSet} />
-            <img
-              src={portrait.src}
-              alt={`Portrait of ${site.name}`}
-              width={320}
-              height={320}
-              fetchPriority="high"
-              className="aspect-square w-full rounded-lg bg-paper object-cover outline -outline-offset-1 outline-black/10"
-            />
-          </picture>
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            src={portrait.src}
+            alt={`Portrait of ${site.name}`}
+            width={320}
+            height={320}
+            fetchPriority="high"
+            className="aspect-square w-full rounded-lg bg-paper object-cover outline -outline-offset-1 outline-black/10"
+          />
           <p className="px-2 pb-1 pt-2 text-center font-mono text-[0.65rem] tracking-widest text-faint">
             EST. SOMEWHERE — STILL SHIPPING
           </p>
@@ -242,11 +239,7 @@ function RecommendationsSection() {
 }
 
 export default async function Home() {
-  const [posts, repos, githubEvents] = await Promise.all([
-    getSubstackPosts(),
-    getRepoHighlights(),
-    getGithubEvents(),
-  ]);
+  const [posts, repos] = await Promise.all([getSubstackPosts(), getRepoHighlights()]);
 
   return (
     <div className="pb-8">
@@ -261,12 +254,12 @@ export default async function Home() {
                 What I’ve been <em>up to</em>
               </>
             }
-            aside={<span>GitHub &amp; Substack at deploy · LinkedIn &amp; reading curated</span>}
+            aside={<span>GitHub live · Substack at deploy · LinkedIn &amp; reading curated</span>}
           />
         </Reveal>
         <Reveal delay={120}>
           <div className="mt-8">
-            <ActivityFeed substackPosts={posts} githubItems={githubEvents} />
+            <ActivityFeed substackPosts={posts} />
           </div>
         </Reveal>
       </section>
