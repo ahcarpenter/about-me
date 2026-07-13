@@ -77,12 +77,12 @@ export default function ActivityFeed({ substackPosts }: { substackPosts: Substac
 
   return (
     <div>
-      <div className="flex flex-wrap gap-2">
+      <div className="flex flex-wrap gap-x-2 gap-y-3">
         {FILTERS.map((f) => (
           <button
             key={f.key}
             onClick={() => setFilter(f.key)}
-            className={`rounded-full border px-3 py-1 font-mono text-xs tracking-wide transition-colors ${
+            className={`relative rounded-full border px-3 py-1.5 font-mono text-xs tracking-wide transition-[color,background-color,border-color,scale] before:absolute before:inset-x-0 before:-inset-y-1.5 before:content-[''] active:scale-[0.96] ${
               filter === f.key
                 ? "border-accent bg-accent-soft text-accent-deep"
                 : "border-line bg-surface text-muted hover:border-line-strong hover:text-ink"
