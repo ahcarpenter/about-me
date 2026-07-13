@@ -38,7 +38,7 @@ function Hero() {
       <div>
         <p className="kicker">Hello, I’m</p>
         <h1 className="display mt-3 text-5xl sm:text-6xl md:text-7xl">
-          Drew <em>Carpenter</em>
+          Andrew <em>Carpenter</em>
         </h1>
         <p className="mt-6 max-w-xl text-lg leading-relaxed text-soft">
           {site.tagline} I spend my days shipping things, writing about what I
