@@ -1,10 +1,13 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 import { site } from "@/lib/site";
 import { linkedinActivity } from "@/data/linkedin";
 import { recentReads } from "@/data/reading";
 import type { SubstackPost } from "@/lib/substack";
+import { describeGithubEvent, type GithubEvent } from "@/lib/github";
+import { relativeTime } from "@/lib/format";
+import { useGithubApi } from "@/lib/useGithubApi";
 
 type Source = "github" | "linkedin" | "substack" | "reading";
 
@@ -31,99 +34,18 @@ const FILTERS: Array<{ key: Source | "all"; label: string }> = [
   { key: "reading", label: "Reading" },
 ];
 
-function relativeTime(iso: string): string {
-  const then = new Date(iso).getTime();
-  if (Number.isNaN(then)) return "";
-  const days = Math.round((Date.now() - then) / 86_400_000);
-  if (days <= 0) return "today";
-  if (days === 1) return "yesterday";
-  if (days < 30) return `${days}d ago`;
-  if (days < 365) return `${Math.round(days / 30)}mo ago`;
-  return `${Math.round(days / 365)}y ago`;
-}
-
-/* eslint-disable @typescript-eslint/no-explicit-any */
-function describeGithubEvent(ev: any): FeedItem | null {
-  const repo: string = ev?.repo?.name ?? "";
-  const repoUrl = `https://github.com/${repo}`;
-  const base = { source: "github" as const, date: ev?.created_at ?? "", url: repoUrl };
-  switch (ev?.type) {
-    case "PushEvent": {
-      const n = ev.payload?.commits?.length ?? 0;
-      return { ...base, title: `Pushed ${n} commit${n === 1 ? "" : "s"} to ${repo}` };
-    }
-    case "CreateEvent":
-      if (ev.payload?.ref_type === "repository")
-        return { ...base, title: `Created repository ${repo}` };
-      if (ev.payload?.ref_type === "branch")
-        return { ...base, title: `Created branch ${ev.payload.ref} in ${repo}` };
-      return null;
-    case "PullRequestEvent": {
-      const pr = ev.payload?.pull_request;
-      const action = ev.payload?.action === "closed" && pr?.merged ? "Merged" : ev.payload?.action;
-      if (action !== "opened" && action !== "Merged") return null;
-      return {
-        ...base,
-        title: `${action === "Merged" ? "Merged" : "Opened"} PR in ${repo}: ${pr?.title ?? ""}`,
-        url: pr?.html_url ?? repoUrl,
-      };
-    }
-    case "IssuesEvent":
-      if (ev.payload?.action !== "opened") return null;
-      return {
-        ...base,
-        title: `Opened issue in ${repo}: ${ev.payload?.issue?.title ?? ""}`,
-        url: ev.payload?.issue?.html_url ?? repoUrl,
-      };
-    case "WatchEvent":
-      return { ...base, title: `Starred ${repo}` };
-    case "ForkEvent":
-      return { ...base, title: `Forked ${repo}` };
-    case "ReleaseEvent":
-      return {
-        ...base,
-        title: `Released ${ev.payload?.release?.tag_name ?? ""} of ${repo}`,
-        url: ev.payload?.release?.html_url ?? repoUrl,
-      };
-    case "PublicEvent":
-      return { ...base, title: `Open-sourced ${repo}` };
-    default:
-      return null;
-  }
-}
-/* eslint-enable @typescript-eslint/no-explicit-any */
-
 export default function ActivityFeed({ substackPosts }: { substackPosts: SubstackPost[] }) {
-  const [githubItems, setGithubItems] = useState<FeedItem[] | null>(null);
-  const [githubFailed, setGithubFailed] = useState(false);
+  const { data: events, failed: githubFailed } = useGithubApi<GithubEvent[]>(
+    `/users/${site.githubUsername}/events/public?per_page=30`,
+  );
   const [filter, setFilter] = useState<Source | "all">("all");
 
-  useEffect(() => {
-    let cancelled = false;
-    fetch(`https://api.github.com/users/${site.githubUsername}/events/public?per_page=30`, {
-      headers: { accept: "application/vnd.github+json" },
-    })
-      .then((r) => (r.ok ? r.json() : Promise.reject(new Error(String(r.status)))))
-      .then((events: unknown[]) => {
-        if (cancelled) return;
-        const items = events
-          .map(describeGithubEvent)
-          .filter((i): i is FeedItem => i !== null)
-          .slice(0, 10);
-        setGithubItems(items);
-      })
-      .catch(() => {
-        if (!cancelled) {
-          setGithubItems([]);
-          setGithubFailed(true);
-        }
-      });
-    return () => {
-      cancelled = true;
-    };
-  }, []);
-
   const items = useMemo(() => {
+    const githubItems: FeedItem[] = (events ?? [])
+      .map(describeGithubEvent)
+      .filter((i): i is NonNullable<typeof i> => i !== null)
+      .slice(0, 10)
+      .map((i) => ({ ...i, source: "github" as const }));
     const substackItems: FeedItem[] = substackPosts.slice(0, 4).map((p) => ({
       source: "substack",
       date: p.date,
@@ -144,14 +66,14 @@ export default function ActivityFeed({ substackPosts }: { substackPosts: Substac
       url: r.url,
       sample: r.sample,
     }));
-    return [...(githubItems ?? []), ...substackItems, ...linkedinItems, ...readingItems]
+    return [...githubItems, ...substackItems, ...linkedinItems, ...readingItems]
       .filter((i) => i.date)
       .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
       .slice(0, 14);
-  }, [githubItems, substackPosts]);
+  }, [events, substackPosts]);
 
   const visible = filter === "all" ? items : items.filter((i) => i.source === filter);
-  const loading = githubItems === null;
+  const loading = events === null && !githubFailed;
 
   return (
     <div>

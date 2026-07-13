@@ -24,11 +24,21 @@ const plexMono = IBM_Plex_Mono({
 });
 
 export const metadata: Metadata = {
+  metadataBase: new URL(site.url),
   title: {
     default: `${site.shortName} — ${site.tagline}`,
     template: `%s — ${site.shortName}`,
   },
   description: site.description,
+  // og/twitter title + description inherit from the resolved page metadata.
+  openGraph: {
+    siteName: site.shortName,
+    type: "website",
+    images: [{ url: site.avatarUrl, width: 320, height: 320, alt: `Portrait of ${site.name}` }],
+  },
+  twitter: {
+    card: "summary",
+  },
 };
 
 export const viewport: Viewport = {

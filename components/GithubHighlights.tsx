@@ -1,20 +1,10 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useMemo } from "react";
 import { site } from "@/lib/site";
 import { pinnedRepos, highlightCount } from "@/data/projects";
-
-type Repo = {
-  name: string;
-  html_url: string;
-  description: string | null;
-  stargazers_count: number;
-  forks_count: number;
-  language: string | null;
-  pushed_at: string;
-  fork: boolean;
-  archived: boolean;
-};
+import { pickHighlights, type Repo } from "@/lib/github";
+import { useGithubApi } from "@/lib/useGithubApi";
 
 const LANGUAGE_COLORS: Record<string, string> = {
   TypeScript: "#3178c6",
@@ -35,43 +25,14 @@ const LANGUAGE_COLORS: Record<string, string> = {
   Elixir: "#6e4a7e",
 };
 
-function pickHighlights(repos: Repo[]): Repo[] {
-  const eligible = repos.filter((r) => !r.fork && !r.archived);
-  const byName = new Map(eligible.map((r) => [r.name.toLowerCase(), r]));
-  const pinned = pinnedRepos
-    .map((name) => byName.get(name.toLowerCase()))
-    .filter((r): r is Repo => Boolean(r));
-  const pinnedNames = new Set(pinned.map((r) => r.name));
-  const rest = eligible
-    .filter((r) => !pinnedNames.has(r.name))
-    .sort(
-      (a, b) =>
-        b.stargazers_count - a.stargazers_count ||
-        new Date(b.pushed_at).getTime() - new Date(a.pushed_at).getTime(),
-    );
-  return [...pinned, ...rest].slice(0, highlightCount);
-}
-
 export default function GithubHighlights() {
-  const [repos, setRepos] = useState<Repo[] | null>(null);
-  const [failed, setFailed] = useState(false);
-
-  useEffect(() => {
-    let cancelled = false;
-    fetch(`https://api.github.com/users/${site.githubUsername}/repos?per_page=100&sort=pushed`, {
-      headers: { accept: "application/vnd.github+json" },
-    })
-      .then((r) => (r.ok ? r.json() : Promise.reject(new Error(String(r.status)))))
-      .then((data: Repo[]) => {
-        if (!cancelled) setRepos(pickHighlights(data));
-      })
-      .catch(() => {
-        if (!cancelled) setFailed(true);
-      });
-    return () => {
-      cancelled = true;
-    };
-  }, []);
+  const { data, failed } = useGithubApi<Repo[]>(
+    `/users/${site.githubUsername}/repos?per_page=100&sort=pushed`,
+  );
+  const repos = useMemo(
+    () => (data === null ? null : pickHighlights(data, pinnedRepos, highlightCount)),
+    [data],
+  );
 
   if (failed) {
     return (

@@ -13,8 +13,11 @@ const links = [
 export default function Header() {
   const pathname = usePathname();
 
-  const isActive = (href: string) =>
-    href === "/" ? pathname === "/" : pathname.startsWith(href.replace(/\/$/, ""));
+  const isActive = (href: string) => {
+    if (href === "/") return pathname === "/";
+    const base = href.replace(/\/$/, "");
+    return pathname === base || pathname.startsWith(`${base}/`);
+  };
 
   return (
     <header className="sticky top-0 z-40 border-b border-line bg-cream/85 backdrop-blur-md">
