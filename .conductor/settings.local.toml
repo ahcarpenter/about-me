@@ -10,5 +10,13 @@ default = true
 icon = "play"
 
 [scripts.run.test]
-command = "pnpm test:all"
+command = "pnpm test"
 icon = "test-tube"
+
+[scripts.run.lint]
+command = "pnpm lint"
+icon = "wrench"
+
+[scripts.run.build]
+command = "pnpm build"
+icon = "package"
