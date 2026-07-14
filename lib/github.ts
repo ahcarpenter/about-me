@@ -23,11 +23,14 @@ export type GithubEvent = {
   payload?: {
     size?: number;
     commits?: unknown[];
+    before?: string;
+    head?: string;
     ref?: string;
     ref_type?: string;
     action?: string;
-    pull_request?: { title?: string; html_url?: string; merged?: boolean };
-    issue?: { title?: string; html_url?: string };
+    number?: number;
+    pull_request?: { title?: string; html_url?: string; merged?: boolean; number?: number };
+    issue?: { title?: string; html_url?: string; number?: number };
     release?: { tag_name?: string; html_url?: string };
   };
 };
@@ -45,10 +48,19 @@ export function describeGithubEvent(ev: GithubEvent): GithubFeedItem | null {
   const base = { date: ev.created_at ?? "", url: repoUrl };
   switch (ev.type) {
     case "PushEvent": {
-      // The Events API truncates `commits` to 20 entries, so `size` is the only
-      // reliable total for larger pushes; fall back to the array length.
-      const n = ev.payload?.size ?? ev.payload?.commits?.length ?? 0;
-      return { ...base, title: `Pushed ${n} commit${n === 1 ? "" : "s"} to ${repo}` };
+      // Public-events PushEvent payloads no longer include commit details —
+      // just before/head/ref — so a count is often unavailable. When `size`
+      // (or a legacy `commits` array) is present use it; otherwise don't
+      // claim a number. `commits` also truncates at 20, so prefer `size`.
+      const p = ev.payload;
+      const n = p?.size ?? p?.commits?.length ?? 0;
+      const url =
+        p?.before && p?.head
+          ? `https://github.com/${repo}/compare/${p.before}...${p.head}`
+          : repoUrl;
+      const title =
+        n > 0 ? `Pushed ${n} commit${n === 1 ? "" : "s"} to ${repo}` : `Pushed to ${repo}`;
+      return { ...base, title, url };
     }
     case "CreateEvent":
       if (ev.payload?.ref_type === "repository")
@@ -57,32 +69,45 @@ export function describeGithubEvent(ev: GithubEvent): GithubFeedItem | null {
         return { ...base, title: `Created branch ${ev.payload.ref} in ${repo}` };
       return null;
     case "PullRequestEvent": {
+      // Slim public payloads report `action: "merged"` directly and strip the
+      // PR down to numbers/refs (no title, html_url, or merged flag); legacy
+      // payloads use "closed" + merged. Handle both, labelling by #number
+      // when the title is gone.
       const pr = ev.payload?.pull_request;
-      const action = ev.payload?.action === "closed" && pr?.merged ? "Merged" : ev.payload?.action;
-      if (action !== "opened" && action !== "Merged") return null;
+      const merged =
+        ev.payload?.action === "merged" || (ev.payload?.action === "closed" && pr?.merged);
+      if (ev.payload?.action !== "opened" && !merged) return null;
+      const number = ev.payload?.number ?? pr?.number;
+      const label = pr?.title ?? (number != null ? `#${number}` : "");
       return {
         ...base,
-        title: `${action === "Merged" ? "Merged" : "Opened"} PR in ${repo}: ${pr?.title ?? ""}`,
-        url: pr?.html_url ?? repoUrl,
+        title: `${merged ? "Merged" : "Opened"} PR in ${repo}${label ? `: ${label}` : ""}`,
+        url: pr?.html_url ?? (number != null ? `${repoUrl}/pull/${number}` : repoUrl),
       };
     }
-    case "IssuesEvent":
+    case "IssuesEvent": {
       if (ev.payload?.action !== "opened") return null;
+      const issue = ev.payload?.issue;
+      const label = issue?.title ?? (issue?.number != null ? `#${issue.number}` : "");
       return {
         ...base,
-        title: `Opened issue in ${repo}: ${ev.payload?.issue?.title ?? ""}`,
-        url: ev.payload?.issue?.html_url ?? repoUrl,
+        title: `Opened issue in ${repo}${label ? `: ${label}` : ""}`,
+        url:
+          issue?.html_url ?? (issue?.number != null ? `${repoUrl}/issues/${issue.number}` : repoUrl),
       };
+    }
     case "WatchEvent":
       return { ...base, title: `Starred ${repo}` };
     case "ForkEvent":
       return { ...base, title: `Forked ${repo}` };
-    case "ReleaseEvent":
+    case "ReleaseEvent": {
+      const tag = ev.payload?.release?.tag_name;
       return {
         ...base,
-        title: `Released ${ev.payload?.release?.tag_name ?? ""} of ${repo}`,
+        title: tag ? `Released ${tag} of ${repo}` : `Published a release of ${repo}`,
         url: ev.payload?.release?.html_url ?? repoUrl,
       };
+    }
     case "PublicEvent":
       return { ...base, title: `Open-sourced ${repo}` };
     default:

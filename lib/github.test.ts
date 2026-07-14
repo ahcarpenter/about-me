@@ -47,6 +47,24 @@ describe("describeGithubEvent", () => {
     ).toBe("Pushed 3 commits to u/repo");
   });
 
+  it("omits the count for slim payloads and links to the compare view", () => {
+    // Current public-events PushEvent payloads carry no commit details at all:
+    // only before/head/push_id/ref/repository_id. Never say "0 commits".
+    expect(
+      describeGithubEvent({
+        ...base,
+        type: "PushEvent",
+        payload: { before: "abc123", head: "def456", ref: "refs/heads/main" },
+      }),
+    ).toMatchObject({
+      title: "Pushed to u/repo",
+      url: "https://github.com/u/repo/compare/abc123...def456",
+    });
+    expect(
+      describeGithubEvent({ ...base, type: "PushEvent", payload: {} }),
+    ).toMatchObject({ title: "Pushed to u/repo", url: "https://github.com/u/repo" });
+  });
+
   it("describes repository and branch creation, skips tags", () => {
     expect(
       describeGithubEvent({ ...base, type: "CreateEvent", payload: { ref_type: "repository" } })
@@ -87,6 +105,28 @@ describe("describeGithubEvent", () => {
         payload: { action: "closed", pull_request: { ...pr, merged: false } },
       }),
     ).toBeNull();
+  });
+
+  it("handles slim PR payloads: merged action, #number label, built URL", () => {
+    // Slim public payloads use action "merged" and strip title/html_url/merged
+    // from the PR object, leaving only number and refs.
+    expect(
+      describeGithubEvent({
+        ...base,
+        type: "PullRequestEvent",
+        payload: { action: "merged", number: 41, pull_request: { number: 41 } },
+      }),
+    ).toMatchObject({
+      title: "Merged PR in u/repo: #41",
+      url: "https://github.com/u/repo/pull/41",
+    });
+    expect(
+      describeGithubEvent({
+        ...base,
+        type: "PullRequestEvent",
+        payload: { action: "opened", number: 7, pull_request: { number: 7 } },
+      })?.title,
+    ).toBe("Opened PR in u/repo: #7");
   });
 
   it("only reports opened issues", () => {
