@@ -1,7 +1,8 @@
 # Lint, test, and build the Next.js static export; deploy it to GitHub Pages.
 # Pull requests run the build job only, as a required check.
-# Substack posts are fetched at build time, so each deploy refreshes them;
-# GitHub activity/projects are fetched live in the browser.
+# Substack posts, GitHub projects, and GitHub activity are all fetched at build
+# time, so each deploy refreshes them (GITHUB_TOKEN gives activity accurate
+# commit counts and authenticated rate limits).
 name: Deploy
 
 on:

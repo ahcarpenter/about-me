@@ -13,7 +13,6 @@ export type Repo = {
   pushed_at: string;
   fork: boolean;
   archived: boolean;
-  commit_count?: number;
 };
 
 /** The subset of a GitHub public-events payload the feed cares about. */
@@ -24,9 +23,12 @@ export type GithubEvent = {
   payload?: {
     size?: number;
     commits?: unknown[];
+    before?: string;
+    head?: string;
     ref?: string;
     ref_type?: string;
     action?: string;
+    number?: number;
     pull_request?: { title?: string; html_url?: string; merged?: boolean };
     issue?: { title?: string; html_url?: string };
     release?: { tag_name?: string; html_url?: string };
@@ -46,10 +48,14 @@ export function describeGithubEvent(ev: GithubEvent): GithubFeedItem | null {
   const base = { date: ev.created_at ?? "", url: repoUrl };
   switch (ev.type) {
     case "PushEvent": {
-      // The Events API truncates `commits` to 20 entries, so `size` is the only
-      // reliable total for larger pushes; fall back to the array length.
-      const n = ev.payload?.size ?? ev.payload?.commits?.length ?? 0;
-      return { ...base, title: `Pushed ${n} commit${n === 1 ? "" : "s"} to ${repo}` };
+      // The Events API no longer returns a commit count in PushEvent payloads;
+      // the build backfills `size` from the compare API (see lib/activity.ts).
+      // When it's still missing (compare failed, force push), don't invent a
+      // total — just say a push happened.
+      const n = ev.payload?.size ?? ev.payload?.commits?.length;
+      return n
+        ? { ...base, title: `Pushed ${n} commit${n === 1 ? "" : "s"} to ${repo}` }
+        : { ...base, title: `Pushed to ${repo}` };
     }
     case "CreateEvent":
       if (ev.payload?.ref_type === "repository")
@@ -59,21 +65,30 @@ export function describeGithubEvent(ev: GithubEvent): GithubFeedItem | null {
       return null;
     case "PullRequestEvent": {
       const pr = ev.payload?.pull_request;
-      const action = ev.payload?.action === "closed" && pr?.merged ? "Merged" : ev.payload?.action;
-      if (action !== "opened" && action !== "Merged") return null;
+      // Merges arrive as action "merged" today; older payloads used "closed"
+      // with pull_request.merged. We only surface opens and merges.
+      const merged =
+        ev.payload?.action === "merged" || (ev.payload?.action === "closed" && pr?.merged === true);
+      const opened = ev.payload?.action === "opened";
+      if (!merged && !opened) return null;
+      const verb = merged ? "Merged" : "Opened";
+      // The Events API no longer returns PR titles/URLs; the build backfills them
+      // (see lib/activity.ts). Fall back to a title-less line if it's still absent.
       return {
         ...base,
-        title: `${action === "Merged" ? "Merged" : "Opened"} PR in ${repo}: ${pr?.title ?? ""}`,
+        title: pr?.title ? `${verb} PR in ${repo}: ${pr.title}` : `${verb} a PR in ${repo}`,
         url: pr?.html_url ?? repoUrl,
       };
     }
-    case "IssuesEvent":
+    case "IssuesEvent": {
       if (ev.payload?.action !== "opened") return null;
+      const issue = ev.payload?.issue;
       return {
         ...base,
-        title: `Opened issue in ${repo}: ${ev.payload?.issue?.title ?? ""}`,
-        url: ev.payload?.issue?.html_url ?? repoUrl,
+        title: issue?.title ? `Opened issue in ${repo}: ${issue.title}` : `Opened an issue in ${repo}`,
+        url: issue?.html_url ?? repoUrl,
       };
+    }
     case "WatchEvent":
       return { ...base, title: `Starred ${repo}` };
     case "ForkEvent":

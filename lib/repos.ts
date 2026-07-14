@@ -5,8 +5,8 @@ import { pinnedRepos, highlightCount } from "@/data/projects";
 const GQL_URL = "https://api.github.com/graphql";
 const REST_URL = `https://api.github.com/users/${site.githubUsername}/repos?per_page=100&sort=pushed`;
 
-// Single authenticated request: all repo metadata + commit counts in one shot.
-// Costs 1 GraphQL point (vs. N+1 REST calls to get the same data).
+// Single authenticated request for all repo metadata. Authenticated GraphQL
+// gets 5,000 points/hr vs. 60 req/hr for unauthenticated REST.
 const GQL_QUERY = `{
   user(login: "${site.githubUsername}") {
     repositories(first: 100, orderBy: {field: PUSHED_AT, direction: DESC}) {
@@ -20,13 +20,6 @@ const GQL_QUERY = `{
         pushedAt
         isArchived
         isFork
-        defaultBranchRef {
-          target {
-            ... on Commit {
-              history { totalCount }
-            }
-          }
-        }
       }
     }
   }
@@ -42,7 +35,6 @@ type GqlRepoNode = {
   pushedAt: string;
   isArchived: boolean;
   isFork: boolean;
-  defaultBranchRef: { target: { history: { totalCount: number } } | null } | null;
 };
 
 function mapNode(node: GqlRepoNode): Repo {
@@ -56,7 +48,6 @@ function mapNode(node: GqlRepoNode): Repo {
     pushed_at: node.pushedAt,
     fork: node.isFork,
     archived: node.isArchived,
-    commit_count: node.defaultBranchRef?.target?.history.totalCount,
   };
 }
 
@@ -91,16 +82,16 @@ async function fetchViaREST(): Promise<Repo[]> {
 
 /**
  * Fetch repo highlights at build time. With GITHUB_TOKEN set, uses a single
- * authenticated GraphQL request that also returns commit counts (5,000 points/hr).
- * Without a token, falls back to the unauthenticated REST API (no commit counts,
- * 60 req/hr per-IP limit). Either way, the site still builds if the API is down.
+ * authenticated GraphQL request (5,000 points/hr). Without a token, falls back
+ * to the unauthenticated REST API (60 req/hr per-IP limit). Either way, the
+ * site still builds if the API is down.
  */
 export async function getRepoHighlights(): Promise<Repo[]> {
   try {
     const token = process.env.GITHUB_TOKEN;
     if (!token) {
       console.warn(
-        "[github] GITHUB_TOKEN not set — falling back to unauthenticated REST (no commit counts, 60 req/hr limit)",
+        "[github] GITHUB_TOKEN not set — falling back to unauthenticated REST (60 req/hr per-IP limit)",
       );
     }
     const repos = await (token ? fetchViaGraphQL(token) : fetchViaREST());

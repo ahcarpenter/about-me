@@ -47,6 +47,18 @@ describe("describeGithubEvent", () => {
     ).toBe("Pushed 3 commits to u/repo");
   });
 
+  it("omits the count when the payload carries no commit total", () => {
+    // Current Events API PushEvent payloads have neither `size` nor `commits`
+    // (only push_id/ref/head/before) — never render "Pushed 0 commits".
+    expect(
+      describeGithubEvent({ ...base, type: "PushEvent", payload: { ref: "refs/heads/main" } })
+        ?.title,
+    ).toBe("Pushed to u/repo");
+    expect(
+      describeGithubEvent({ ...base, type: "PushEvent", payload: { size: 0, commits: [] } })?.title,
+    ).toBe("Pushed to u/repo");
+  });
+
   it("describes repository and branch creation, skips tags", () => {
     expect(
       describeGithubEvent({ ...base, type: "CreateEvent", payload: { ref_type: "repository" } })
@@ -64,7 +76,7 @@ describe("describeGithubEvent", () => {
     ).toBeNull();
   });
 
-  it("reports opened and merged PRs, skips closed-unmerged", () => {
+  it("reports opened and merged PRs, skips closed-unmerged and reopened", () => {
     const pr = { title: "Fix", html_url: "https://github.com/u/repo/pull/1" };
     expect(
       describeGithubEvent({
@@ -73,6 +85,15 @@ describe("describeGithubEvent", () => {
         payload: { action: "opened", pull_request: pr },
       }),
     ).toMatchObject({ title: "Opened PR in u/repo: Fix", url: pr.html_url });
+    // Current API reports merges directly as action "merged"...
+    expect(
+      describeGithubEvent({
+        ...base,
+        type: "PullRequestEvent",
+        payload: { action: "merged", pull_request: pr },
+      })?.title,
+    ).toBe("Merged PR in u/repo: Fix");
+    // ...while older payloads used "closed" with pull_request.merged.
     expect(
       describeGithubEvent({
         ...base,
@@ -87,13 +108,28 @@ describe("describeGithubEvent", () => {
         payload: { action: "closed", pull_request: { ...pr, merged: false } },
       }),
     ).toBeNull();
+    expect(
+      describeGithubEvent({ ...base, type: "PullRequestEvent", payload: { action: "reopened", pull_request: pr } }),
+    ).toBeNull();
   });
 
-  it("only reports opened issues", () => {
+  it("drops the dangling colon when a PR title is not (yet) backfilled", () => {
+    expect(
+      describeGithubEvent({ ...base, type: "PullRequestEvent", payload: { action: "opened" } })?.title,
+    ).toBe("Opened a PR in u/repo");
+    expect(
+      describeGithubEvent({ ...base, type: "PullRequestEvent", payload: { action: "merged" } })?.title,
+    ).toBe("Merged a PR in u/repo");
+  });
+
+  it("only reports opened issues, gracefully without a title", () => {
     const issue = { title: "Bug", html_url: "https://github.com/u/repo/issues/1" };
     expect(
       describeGithubEvent({ ...base, type: "IssuesEvent", payload: { action: "opened", issue } }),
     ).toMatchObject({ title: "Opened issue in u/repo: Bug", url: issue.html_url });
+    expect(
+      describeGithubEvent({ ...base, type: "IssuesEvent", payload: { action: "opened" } })?.title,
+    ).toBe("Opened an issue in u/repo");
     expect(
       describeGithubEvent({ ...base, type: "IssuesEvent", payload: { action: "closed", issue } }),
     ).toBeNull();
