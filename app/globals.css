@@ -16,7 +16,8 @@
   --color-faint: oklch(0.6 0.033 88.408);
   --color-line: oklch(0.906 0.027 85.667);
   --color-line-strong: oklch(0.851 0.039 86.893);
-  --color-accent: oklch(0.587 0.161 37.306);
+  /* L capped at 0.56 so accent text clears 4.5:1 AA on cream (was 4.16:1). */
+  --color-accent: oklch(0.56 0.155 37.306);
   --color-accent-deep: oklch(0.504 0.144 37.069);
   --color-accent-soft: oklch(0.927 0.029 60.755);
   --color-gold: oklch(0.663 0.119 80.097);
@@ -41,6 +42,9 @@
     color: var(--color-ink);
     font-family: var(--font-sans);
     -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    /* Missing weights/styles should fail visibly, not render browser-faked. */
+    font-synthesis: none;
     text-rendering: optimizeLegibility;
   }
 
@@ -75,7 +79,7 @@
   /* Mono uppercase section kicker */
   .kicker {
     font-family: var(--font-mono);
-    font-size: 0.72rem;
+    font-size: 0.75rem;
     font-weight: 500;
     letter-spacing: 0.18em;
     text-transform: uppercase;
@@ -161,7 +165,7 @@
     border-radius: 999px;
     padding: 0.15rem 0.6rem;
     font-family: var(--font-mono);
-    font-size: 0.65rem;
+    font-size: 0.75rem;
     letter-spacing: 0.08em;
     text-transform: uppercase;
     border: 1px solid var(--color-line);

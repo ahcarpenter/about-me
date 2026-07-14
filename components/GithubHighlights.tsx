@@ -53,7 +53,7 @@ export default function GithubHighlights({ repos }: { repos: Repo[] }) {
           <p className="mt-2 flex-1 text-sm leading-relaxed text-muted">
             {repo.description ?? "No description yet — but the code speaks for itself."}
           </p>
-          <div className="mt-4 flex items-center gap-4 font-mono text-xs text-faint">
+          <div className="mt-4 flex items-center gap-4 font-mono text-xs text-muted">
             {repo.language && (
               <span className="inline-flex items-center gap-1.5">
                 <span
