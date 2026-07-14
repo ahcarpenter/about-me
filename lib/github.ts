@@ -21,6 +21,7 @@ export type GithubEvent = {
   created_at?: string;
   repo?: { name?: string };
   payload?: {
+    size?: number;
     commits?: unknown[];
     ref?: string;
     ref_type?: string;
@@ -44,7 +45,9 @@ export function describeGithubEvent(ev: GithubEvent): GithubFeedItem | null {
   const base = { date: ev.created_at ?? "", url: repoUrl };
   switch (ev.type) {
     case "PushEvent": {
-      const n = ev.payload?.commits?.length ?? 0;
+      // The Events API truncates `commits` to 20 entries, so `size` is the only
+      // reliable total for larger pushes; fall back to the array length.
+      const n = ev.payload?.size ?? ev.payload?.commits?.length ?? 0;
       return { ...base, title: `Pushed ${n} commit${n === 1 ? "" : "s"} to ${repo}` };
     }
     case "CreateEvent":
