@@ -13,6 +13,7 @@ export type Repo = {
   pushed_at: string;
   fork: boolean;
   archived: boolean;
+  commit_count?: number;
 };
 
 /** The subset of a GitHub public-events payload the feed cares about. */
