@@ -244,6 +244,11 @@
     animation: msg-in 300ms cubic-bezier(0.22, 1, 0.36, 1) both;
   }
 
+  /* The opener message is present on page load — don't animate it in. */
+  .msg:first-child {
+    animation: none;
+  }
+
   .msg-me {
     background: var(--color-accent);
     color: var(--color-surface);

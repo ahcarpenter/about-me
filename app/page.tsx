@@ -101,7 +101,12 @@ function WritingSection({ posts }: { posts: SubstackPost[] }) {
             </>
           }
           aside={
-            <a href={site.substackUrl} target="_blank" rel="noopener noreferrer" className="hover:text-accent">
+            <a
+              href={site.substackUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="relative inline-block transition-colors before:absolute before:-inset-x-1 before:-inset-y-3 before:content-[''] hover:text-accent"
+            >
               {site.substackHandle} ↗
             </a>
           }
@@ -216,7 +221,12 @@ function RecommendationsSection() {
             </>
           }
           aside={
-            <a href={site.linkedinUrl} target="_blank" rel="noopener noreferrer" className="hover:text-accent">
+            <a
+              href={site.linkedinUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="relative inline-block transition-colors before:absolute before:-inset-x-1 before:-inset-y-3 before:content-[''] hover:text-accent"
+            >
               recommendations via LinkedIn ↗
             </a>
           }
@@ -274,7 +284,12 @@ export default async function Home() {
               </>
             }
             aside={
-              <a href={site.githubUrl} target="_blank" rel="noopener noreferrer" className="hover:text-accent">
+              <a
+                href={site.githubUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="relative inline-block transition-colors before:absolute before:-inset-x-1 before:-inset-y-3 before:content-[''] hover:text-accent"
+              >
                 github.com/{site.githubUsername} ↗
               </a>
             }
