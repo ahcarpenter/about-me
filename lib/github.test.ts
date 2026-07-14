@@ -21,11 +21,30 @@ describe("describeGithubEvent", () => {
 
   it("describes pushes with commit count and pluralization", () => {
     expect(
-      describeGithubEvent({ ...base, type: "PushEvent", payload: { commits: [{}] } })?.title,
+      describeGithubEvent({ ...base, type: "PushEvent", payload: { size: 1, commits: [{}] } })
+        ?.title,
     ).toBe("Pushed 1 commit to u/repo");
     expect(
-      describeGithubEvent({ ...base, type: "PushEvent", payload: { commits: [{}, {}] } })?.title,
+      describeGithubEvent({ ...base, type: "PushEvent", payload: { size: 2, commits: [{}, {}] } })
+        ?.title,
     ).toBe("Pushed 2 commits to u/repo");
+  });
+
+  it("uses size, not the truncated commits array, for large pushes", () => {
+    // The Events API caps `commits` at 20 entries; `size` carries the real total.
+    expect(
+      describeGithubEvent({
+        ...base,
+        type: "PushEvent",
+        payload: { size: 42, commits: Array.from({ length: 20 }, () => ({})) },
+      })?.title,
+    ).toBe("Pushed 42 commits to u/repo");
+  });
+
+  it("falls back to the commits array when size is absent", () => {
+    expect(
+      describeGithubEvent({ ...base, type: "PushEvent", payload: { commits: [{}, {}, {}] } })?.title,
+    ).toBe("Pushed 3 commits to u/repo");
   });
 
   it("describes repository and branch creation, skips tags", () => {
