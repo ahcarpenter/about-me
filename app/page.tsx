@@ -4,6 +4,7 @@ import ActivityFeed from "@/components/ActivityFeed";
 import GithubHighlights from "@/components/GithubHighlights";
 import { getSubstackPosts, type SubstackPost } from "@/lib/substack";
 import { getRepoHighlights } from "@/lib/repos";
+import { getGithubActivity } from "@/lib/activity";
 import { recommendations, type Recommendation } from "@/data/linkedin";
 import { portrait, recommenderAvatars } from "@/data/avatars";
 import { site } from "@/lib/site";
@@ -249,7 +250,11 @@ function RecommendationsSection() {
 }
 
 export default async function Home() {
-  const [posts, repos] = await Promise.all([getSubstackPosts(), getRepoHighlights()]);
+  const [posts, repos, githubActivity] = await Promise.all([
+    getSubstackPosts(),
+    getRepoHighlights(),
+    getGithubActivity(),
+  ]);
 
   return (
     <div className="pb-8">
@@ -264,12 +269,12 @@ export default async function Home() {
                 What I’ve been <em>up to</em>
               </>
             }
-            aside={<span>GitHub live · Substack at deploy · LinkedIn &amp; reading curated</span>}
+            aside={<span>GitHub &amp; Substack at deploy · LinkedIn &amp; reading curated</span>}
           />
         </Reveal>
         <Reveal delay={120}>
           <div className="mt-8">
-            <ActivityFeed substackPosts={posts} />
+            <ActivityFeed githubActivity={githubActivity} substackPosts={posts} />
           </div>
         </Reveal>
       </section>
