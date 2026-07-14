@@ -20,4 +20,3 @@ next-env.d.ts
 
 # local agent config (may hold secrets)
 .claude/settings.local.json
-.conductor/settings.local.toml
