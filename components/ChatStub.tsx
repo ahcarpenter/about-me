@@ -52,8 +52,8 @@ export default function ChatStub() {
           <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-gold opacity-60" />
           <span className="relative inline-flex h-2.5 w-2.5 rounded-full bg-gold" />
         </span>
-        <p className="font-mono text-xs tracking-wide text-muted">
-          AI {site.firstName.toUpperCase()} · PROTOTYPE — NOT YET WIRED TO A MODEL
+        <p className="font-mono text-xs uppercase tracking-wide text-muted">
+          AI {site.firstName} · prototype — not yet wired to a model
         </p>
       </div>
 
@@ -84,7 +84,7 @@ export default function ChatStub() {
           onChange={(e) => setInput(e.target.value)}
           placeholder={`Ask ${site.firstName} anything…`}
           aria-label="Message"
-          className="flex-1 rounded-full border border-line bg-cream px-4 py-2.5 text-sm outline-none transition-colors placeholder:text-faint focus:border-accent"
+          className="flex-1 rounded-full border border-line bg-cream px-4 py-2.5 text-base outline-none transition-colors placeholder:text-muted focus:border-accent sm:text-sm"
         />
         <button type="submit" disabled={!input.trim() || typing} className="btn btn-primary py-2.5 disabled:cursor-not-allowed disabled:opacity-40">
           Send

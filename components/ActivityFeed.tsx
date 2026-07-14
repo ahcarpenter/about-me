@@ -132,10 +132,10 @@ export default function ActivityFeed({ substackPosts }: { substackPosts: Substac
                   </span>
                   {item.sample && <span className="chip ml-2 align-middle">sample</span>}
                 </span>
-                <span className="hidden shrink-0 font-mono text-xs text-faint sm:inline">
+                <span className="hidden shrink-0 font-mono text-xs text-muted sm:inline">
                   {SOURCE_META[item.source].label}
                 </span>
-                <span className="shrink-0 font-mono text-xs text-faint">
+                <span className="shrink-0 font-mono text-xs text-muted">
                   {relativeTime(item.date)}
                 </span>
               </a>
@@ -144,9 +144,9 @@ export default function ActivityFeed({ substackPosts }: { substackPosts: Substac
       </ul>
 
       {githubFailed && !loading && (
-        <p className="mt-3 font-mono text-xs text-faint">
+        <p className="mt-3 font-mono text-xs text-muted">
           GitHub activity is unavailable right now —{" "}
-          <a href={site.githubUrl} className="underline hover:text-accent" target="_blank" rel="noopener noreferrer">
+          <a href={site.githubUrl} className="underline decoration-line underline-offset-4 hover:text-accent" target="_blank" rel="noopener noreferrer">
             see it on github.com ↗
           </a>
         </p>

@@ -24,13 +24,23 @@ export default function ChatPage() {
         <ChatStub />
       </div>
 
-      <p className="mt-4 font-mono text-xs leading-relaxed text-faint">
+      <p className="mt-4 font-mono text-xs leading-relaxed text-muted">
         Prefer the human? Find him on{" "}
-        <a href={site.linkedinUrl} target="_blank" rel="noopener noreferrer" className="underline hover:text-accent">
+        <a
+          href={site.linkedinUrl}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="underline decoration-line underline-offset-4 hover:text-accent"
+        >
           LinkedIn ↗
         </a>{" "}
         or reply to any post on{" "}
-        <a href={site.substackUrl} target="_blank" rel="noopener noreferrer" className="underline hover:text-accent">
+        <a
+          href={site.substackUrl}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="underline decoration-line underline-offset-4 hover:text-accent"
+        >
           Substack ↗
         </a>
         .

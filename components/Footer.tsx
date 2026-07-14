@@ -67,10 +67,10 @@ export default function Footer() {
 
       <div className="border-t border-line">
         <div className="mx-auto flex max-w-5xl flex-wrap items-center justify-between gap-2 px-5 py-4">
-          <p className="font-mono text-xs text-faint">
+          <p className="font-mono text-xs text-muted">
             © {new Date().getFullYear()} {site.name}
           </p>
-          <p className="font-mono text-xs text-faint">
+          <p className="font-mono text-xs text-muted">
             verify me →{" "}
             <a
               href={site.keybaseUrl}

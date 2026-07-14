@@ -80,8 +80,8 @@ function Hero() {
             fetchPriority="high"
             className="aspect-square w-full rounded-lg bg-paper object-cover outline -outline-offset-1 outline-black/10"
           />
-          <p className="px-2 pb-1 pt-2 text-center font-mono text-[0.65rem] tracking-widest text-faint">
-            EST. SOMEWHERE — STILL SHIPPING
+          <p className="px-2 pb-1 pt-2 text-center font-mono text-[0.65rem] uppercase tracking-widest text-faint">
+            Est. somewhere — still shipping
           </p>
         </div>
       </div>
@@ -101,7 +101,12 @@ function WritingSection({ posts }: { posts: SubstackPost[] }) {
             </>
           }
           aside={
-            <a href={site.substackUrl} target="_blank" rel="noopener noreferrer" className="hover:text-accent">
+            <a
+              href={site.substackUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="relative inline-block transition-colors before:absolute before:-inset-x-1 before:-inset-y-3 before:content-[''] hover:text-accent"
+            >
               {site.substackHandle} ↗
             </a>
           }
@@ -113,7 +118,7 @@ function WritingSection({ posts }: { posts: SubstackPost[] }) {
           {posts.slice(0, 3).map((post, i) => (
             <Reveal key={post.link} delay={i * 90}>
               <a href={post.link} target="_blank" rel="noopener noreferrer" className="card group flex h-full flex-col px-6 py-6">
-                <p className="font-mono text-xs text-faint">{formatDate(post.date)}</p>
+                <p className="font-mono text-xs text-muted">{formatDate(post.date)}</p>
                 <h3 className="display mt-3 text-xl leading-snug group-hover:text-accent transition-colors">
                   {post.title}
                 </h3>
@@ -216,7 +221,12 @@ function RecommendationsSection() {
             </>
           }
           aside={
-            <a href={site.linkedinUrl} target="_blank" rel="noopener noreferrer" className="hover:text-accent">
+            <a
+              href={site.linkedinUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="relative inline-block transition-colors before:absolute before:-inset-x-1 before:-inset-y-3 before:content-[''] hover:text-accent"
+            >
               recommendations via LinkedIn ↗
             </a>
           }
@@ -274,7 +284,12 @@ export default async function Home() {
               </>
             }
             aside={
-              <a href={site.githubUrl} target="_blank" rel="noopener noreferrer" className="hover:text-accent">
+              <a
+                href={site.githubUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="relative inline-block transition-colors before:absolute before:-inset-x-1 before:-inset-y-3 before:content-[''] hover:text-accent"
+              >
                 github.com/{site.githubUsername} ↗
               </a>
             }

@@ -24,7 +24,7 @@ export default function Header() {
       <div className="mx-auto flex max-w-5xl flex-wrap items-center justify-between gap-x-4 gap-y-2 px-5 py-3.5">
         <Link
           href="/"
-          className="display text-lg leading-none tracking-tight hover:text-accent transition-colors"
+          className="display relative text-lg leading-none tracking-tight transition-colors before:absolute before:-inset-x-2 before:-inset-y-3 before:content-[''] hover:text-accent"
         >
           {site.shortName}
           <span className="text-accent">.</span>
