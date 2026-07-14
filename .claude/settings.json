@@ -1,0 +1,47 @@
+{
+  "env": {
+    "CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS": "1",
+    "ENABLE_PROMPT_CACHING_1H": "1"
+  },
+  "permissions": {
+    "deny": [
+      "Read(.env)",
+      "Read(.env.*)",
+      "Read(.secrets)"
+    ]
+  },
+  "enabledPlugins": {
+    "agent-skills@addy-agent-skills": true,
+    "caveman@caveman": true,
+    "chrome-devtools-mcp@claude-plugins-official": true
+  },
+  "mcpServers": {
+    "tailwindcss-server": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "tailwindcss-mcp-server"
+      ]
+    },
+    "chrome-devtools": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "chrome-devtools-mcp@latest"
+      ]
+    },
+    "next-devtools": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "next-devtools-mcp@latest"
+      ]
+    },
+    "context7": {
+      "url": "https://mcp.context7.com/mcp",
+      "headers": {
+        "CONTEXT7_API_KEY": "${CONTEXT7_API_KEY}"
+      }
+    }
+  }
+}
