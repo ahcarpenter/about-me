@@ -66,6 +66,9 @@ export default function GithubHighlights({ repos }: { repos: Repo[] }) {
             )}
             {repo.stargazers_count > 0 && <span>★ {repo.stargazers_count}</span>}
             {repo.forks_count > 0 && <span>⑂ {repo.forks_count}</span>}
+            {repo.commit_count != null && repo.commit_count > 0 && (
+              <span>↑ {repo.commit_count.toLocaleString()}</span>
+            )}
           </div>
         </a>
       ))}
