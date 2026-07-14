@@ -2,3 +2,9 @@
 # postcss is pinned past 8.5.18 for the CVE fixed in 8.5.19.
 overrides:
   postcss: ^8.5.19
+
+# Allow postinstall scripts for these packages (pnpm blocks dependency build
+# scripts by default and CI fails on ERR_PNPM_IGNORED_BUILDS).
+allowBuilds:
+  sharp: true
+  unrs-resolver: true
