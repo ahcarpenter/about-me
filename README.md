@@ -33,6 +33,9 @@ badge — replace them with real content and drop the flag.
 - [`data/projects.ts`](data/projects.ts) — pin specific repos in the highlights
   grid (defaults to most-starred).
 - [`data/timeline.ts`](data/timeline.ts) — life story events.
+- [`data/principles.ts`](data/principles.ts) — the /philosophy principles.
+- [`data/nav.ts`](data/nav.ts) — the header/footer page list.
+- [`data/social.ts`](data/social.ts) — the "elsewhere" profile links.
 
 ## Develop
 
