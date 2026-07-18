@@ -11,7 +11,7 @@ import { relativeTime } from "@/lib/format";
 
 const SOURCE_META: Record<Source, { label: string; dot: string }> = {
   github: { label: "GitHub", dot: "var(--color-sage)" },
-  linkedin: { label: "LinkedIn", dot: "#4a6c8c" },
+  linkedin: { label: "LinkedIn", dot: "var(--color-linkedin)" },
   substack: { label: "Substack", dot: "var(--color-accent)" },
   reading: { label: "Reading", dot: "var(--color-gold)" },
 };
