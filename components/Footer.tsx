@@ -1,4 +1,5 @@
 import Link from "next/link";
+import ExternalLink from "@/components/ExternalLink";
 import { site } from "@/lib/site";
 import { navLinks } from "@/data/nav";
 import { socialLinks } from "@/data/social";
@@ -39,14 +40,12 @@ export default function Footer() {
           <ul className="mt-1">
             {socialLinks.map((e) => (
               <li key={e.href}>
-                <a
+                <ExternalLink
                   href={e.href}
-                  target="_blank"
-                  rel="noopener noreferrer"
                   className="inline-block py-2.5 text-sm text-soft transition-colors hover:text-accent"
                 >
                   {e.label} ↗
-                </a>
+                </ExternalLink>
               </li>
             ))}
           </ul>
@@ -60,14 +59,12 @@ export default function Footer() {
           </p>
           <p className="font-mono text-xs text-muted">
             verify me →{" "}
-            <a
+            <ExternalLink
               href={site.keybaseUrl}
-              target="_blank"
-              rel="noopener noreferrer"
               className="text-muted underline decoration-line underline-offset-4 transition-colors hover:text-accent"
             >
               keybase.io/ahcarpenter
-            </a>
+            </ExternalLink>
           </p>
         </div>
       </div>

@@ -1,6 +1,7 @@
 "use client";
 
 import { useMemo, useState } from "react";
+import ExternalLink from "@/components/ExternalLink";
 import { linkedinActivity } from "@/data/linkedin";
 import { recentReads } from "@/data/reading";
 import type { SubstackPost } from "@/lib/sources/substack/substack";
@@ -70,10 +71,8 @@ export default function ActivityFeed({
 
         {visible.map((item, i) => (
           <li key={`${item.source}-${item.date}-${i}`}>
-            <a
+            <ExternalLink
               href={item.url}
-              target="_blank"
-              rel="noopener noreferrer"
               className="group flex items-baseline gap-4 px-5 py-4 transition-colors hover:bg-cream/60"
             >
               <span
@@ -93,7 +92,7 @@ export default function ActivityFeed({
               <span className="shrink-0 font-mono text-xs text-muted">
                 {relativeTime(item.date)}
               </span>
-            </a>
+            </ExternalLink>
           </li>
         ))}
       </ul>
