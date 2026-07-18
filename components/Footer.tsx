@@ -1,19 +1,8 @@
 import Link from "next/link";
+import ExternalLink from "@/components/ExternalLink";
 import { site } from "@/lib/site";
-
-const elsewhere = [
-  { label: "GitHub", href: site.githubUrl },
-  { label: "LinkedIn", href: site.linkedinUrl },
-  { label: "Substack", href: site.substackUrl },
-  { label: "Keybase", href: site.keybaseUrl },
-];
-
-const pages = [
-  { label: "About", href: "/" },
-  { label: "Philosophy", href: "/philosophy/" },
-  { label: "Story", href: "/story/" },
-  { label: "Chat", href: "/chat/" },
-];
+import { navLinks } from "@/data/nav";
+import { socialLinks } from "@/data/social";
 
 export default function Footer() {
   return (
@@ -33,7 +22,7 @@ export default function Footer() {
         <div>
           <p className="kicker">Pages</p>
           <ul className="mt-1">
-            {pages.map((p) => (
+            {navLinks.map((p) => (
               <li key={p.href}>
                 <Link
                   href={p.href}
@@ -49,16 +38,14 @@ export default function Footer() {
         <div>
           <p className="kicker">Elsewhere</p>
           <ul className="mt-1">
-            {elsewhere.map((e) => (
+            {socialLinks.map((e) => (
               <li key={e.href}>
-                <a
+                <ExternalLink
                   href={e.href}
-                  target="_blank"
-                  rel="noopener noreferrer"
                   className="inline-block py-2.5 text-sm text-soft transition-colors hover:text-accent"
                 >
                   {e.label} ↗
-                </a>
+                </ExternalLink>
               </li>
             ))}
           </ul>
@@ -72,14 +59,12 @@ export default function Footer() {
           </p>
           <p className="font-mono text-xs text-muted">
             verify me →{" "}
-            <a
+            <ExternalLink
               href={site.keybaseUrl}
-              target="_blank"
-              rel="noopener noreferrer"
               className="text-muted underline decoration-line underline-offset-4 transition-colors hover:text-accent"
             >
               keybase.io/ahcarpenter
-            </a>
+            </ExternalLink>
           </p>
         </div>
       </div>

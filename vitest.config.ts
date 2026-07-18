@@ -6,6 +6,8 @@ export default defineConfig({
     alias: { "@": path.resolve(import.meta.dirname) },
   },
   test: {
+    // Default to node (fast) for the pure lib tests; component tests opt into
+    // jsdom per-file with a `// @vitest-environment jsdom` docblock.
     environment: "node",
   },
 });

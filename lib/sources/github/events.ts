@@ -1,6 +1,6 @@
 /**
- * Pure helpers for the GitHub REST data the site fetches client-side.
- * Kept free of React so they can be unit-tested directly.
+ * Pure helpers for the GitHub data the site fetches at build time.
+ * Kept free of React (and of the network) so they can be unit-tested directly.
  */
 
 export type Repo = {

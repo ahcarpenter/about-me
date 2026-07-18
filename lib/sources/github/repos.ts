@@ -1,5 +1,7 @@
 import { site } from "@/lib/site";
-import { pickHighlights, type Repo } from "@/lib/github";
+import { timedFetch } from "@/lib/http";
+import { githubHeaders, resolveToken } from "@/lib/sources/github/client";
+import { pickHighlights, type Repo } from "@/lib/sources/github/events";
 import { pinnedRepos, highlightCount } from "@/data/projects";
 
 const GQL_URL = "https://api.github.com/graphql";
@@ -52,14 +54,9 @@ function mapNode(node: GqlRepoNode): Repo {
 }
 
 async function fetchViaGraphQL(token: string): Promise<Repo[]> {
-  const res = await fetch(GQL_URL, {
+  const res = await timedFetch(GQL_URL, {
     method: "POST",
-    signal: AbortSignal.timeout(10_000),
-    headers: {
-      "Content-Type": "application/json",
-      Authorization: `Bearer ${token}`,
-      Accept: "application/vnd.github+json",
-    },
+    headers: { ...githubHeaders(token), "Content-Type": "application/json" },
     body: JSON.stringify({ query: GQL_QUERY }),
   });
   if (!res.ok) throw new Error(`GitHub GraphQL responded ${res.status}`);
@@ -72,10 +69,7 @@ async function fetchViaGraphQL(token: string): Promise<Repo[]> {
 }
 
 async function fetchViaREST(): Promise<Repo[]> {
-  const res = await fetch(REST_URL, {
-    signal: AbortSignal.timeout(10_000),
-    headers: { Accept: "application/vnd.github+json" },
-  });
+  const res = await timedFetch(REST_URL, { headers: githubHeaders() });
   if (!res.ok) throw new Error(`GitHub REST responded ${res.status}`);
   return (await res.json()) as Repo[];
 }
@@ -88,12 +82,7 @@ async function fetchViaREST(): Promise<Repo[]> {
  */
 export async function getRepoHighlights(): Promise<Repo[]> {
   try {
-    const token = process.env.GITHUB_TOKEN;
-    if (!token) {
-      console.warn(
-        "[github] GITHUB_TOKEN not set — falling back to unauthenticated REST (60 req/hr per-IP limit)",
-      );
-    }
+    const token = resolveToken("repo highlights");
     const repos = await (token ? fetchViaGraphQL(token) : fetchViaREST());
     return pickHighlights(repos, pinnedRepos, highlightCount);
   } catch (err) {

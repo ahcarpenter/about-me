@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import ChatStub from "@/components/ChatStub";
+import ExternalLink from "@/components/ExternalLink";
 import { site } from "@/lib/site";
 
 export const metadata: Metadata = {
@@ -26,23 +27,19 @@ export default function ChatPage() {
 
       <p className="mt-4 font-mono text-xs leading-relaxed text-muted">
         Prefer the human? Find him on{" "}
-        <a
+        <ExternalLink
           href={site.linkedinUrl}
-          target="_blank"
-          rel="noopener noreferrer"
           className="underline decoration-line underline-offset-4 hover:text-accent"
         >
           LinkedIn ↗
-        </a>{" "}
+        </ExternalLink>{" "}
         or reply to any post on{" "}
-        <a
+        <ExternalLink
           href={site.substackUrl}
-          target="_blank"
-          rel="noopener noreferrer"
           className="underline decoration-line underline-offset-4 hover:text-accent"
         >
           Substack ↗
-        </a>
+        </ExternalLink>
         .
       </p>
     </div>

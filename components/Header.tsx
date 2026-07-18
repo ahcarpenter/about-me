@@ -3,12 +3,10 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { site } from "@/lib/site";
+import { navLinks } from "@/data/nav";
 
-const links = [
-  { href: "/", label: "About" },
-  { href: "/philosophy/", label: "Philosophy" },
-  { href: "/story/", label: "Story" },
-];
+const pillLinks = navLinks.filter((l) => !l.cta);
+const cta = navLinks.find((l) => l.cta);
 
 export default function Header() {
   const pathname = usePathname();
@@ -31,7 +29,7 @@ export default function Header() {
         </Link>
 
         <nav className="flex items-center gap-1 sm:gap-2">
-          {links.map((l) => (
+          {pillLinks.map((l) => (
             <Link
               key={l.href}
               href={l.href}
@@ -44,13 +42,15 @@ export default function Header() {
               {l.label}
             </Link>
           ))}
-          <Link
-            href="/chat/"
-            className="btn btn-primary relative ml-1 px-4 py-1.5 text-sm before:absolute before:inset-x-0 before:-inset-y-1 before:content-['']"
-          >
-            <span className="sm:hidden">Chat</span>
-            <span className="hidden sm:inline">Chat with me</span>
-          </Link>
+          {cta && (
+            <Link
+              href={cta.href}
+              className="btn btn-primary relative ml-1 px-4 py-1.5 text-sm before:absolute before:inset-x-0 before:-inset-y-1 before:content-['']"
+            >
+              <span className="sm:hidden">{cta.label}</span>
+              <span className="hidden sm:inline">{cta.label} with me</span>
+            </Link>
+          )}
         </nav>
       </div>
     </header>

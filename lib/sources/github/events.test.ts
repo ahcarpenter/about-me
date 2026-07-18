@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { describeGithubEvent, pickHighlights, type GithubEvent, type Repo } from "@/lib/github";
+import { describeGithubEvent, pickHighlights, type GithubEvent, type Repo } from "./events";
 
 function repo(overrides: Partial<Repo>): Repo {
   return {

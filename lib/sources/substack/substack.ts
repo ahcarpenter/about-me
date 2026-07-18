@@ -1,4 +1,5 @@
 import { site } from "@/lib/site";
+import { timedFetch } from "@/lib/http";
 
 export type SubstackPost = {
   title: string;
@@ -47,9 +48,8 @@ export function truncate(text: string, max: number): string {
  */
 export async function getSubstackPosts(limit = 6): Promise<SubstackPost[]> {
   try {
-    const res = await fetch(FEED_URL, {
-      // Don't let a hung feed hang the deploy — fail fast and fall back.
-      signal: AbortSignal.timeout(10_000),
+    // Don't let a hung feed hang the deploy — timedFetch fails fast and we fall back.
+    const res = await timedFetch(FEED_URL, {
       headers: {
         "user-agent":
           "Mozilla/5.0 (compatible; about-me-site/1.0; +" + site.githubUrl + ")",

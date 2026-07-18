@@ -19,7 +19,7 @@ warm cream paper, serif display type (Fraunces), terracotta accent.
 
 | Source | Mechanism |
 | --- | --- |
-| GitHub projects & activity | Fetched live in the browser from the public GitHub API |
+| GitHub projects & activity | Fetched from the GitHub API at **build time** and baked into the static export — refreshed on every deploy, plus a weekly scheduled rebuild. Uses `GITHUB_TOKEN` when set (authenticated GraphQL / higher rate limits), falling back to the unauthenticated API otherwise |
 | Substack posts | Fetched from the RSS feed at **build time** — refreshed on every deploy, plus a weekly scheduled rebuild |
 | LinkedIn recommendations & activity | Curated by hand in [`data/linkedin.ts`](data/linkedin.ts) (LinkedIn has no public API for these) |
 | Recent articles read | Curated by hand in [`data/reading.ts`](data/reading.ts) |
@@ -33,13 +33,22 @@ badge — replace them with real content and drop the flag.
 - [`data/projects.ts`](data/projects.ts) — pin specific repos in the highlights
   grid (defaults to most-starred).
 - [`data/timeline.ts`](data/timeline.ts) — life story events.
+- [`data/principles.ts`](data/principles.ts) — the /philosophy principles.
+- [`data/nav.ts`](data/nav.ts) — the header/footer page list.
+- [`data/social.ts`](data/social.ts) — the "elsewhere" profile links.
 
 ## Develop
 
 ```bash
-npm install
-npm run dev    # http://localhost:3000
-npm run build  # static export to ./out
+pnpm install
+pnpm dev      # http://localhost:3000
+pnpm build    # static export to ./out
+pnpm test     # unit tests (Vitest)
+pnpm lint     # ESLint
 ```
+
+Optionally set `GITHUB_TOKEN` (see [`.env.example`](.env.example)) to fetch GitHub
+data via the authenticated API at build time; without it the site still builds using
+the unauthenticated API.
 
 Pushing to `main` deploys via `.github/workflows/deploy.yml`.

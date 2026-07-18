@@ -22,6 +22,9 @@
   --color-accent-soft: oklch(0.927 0.029 60.755);
   --color-gold: oklch(0.663 0.119 80.097);
   --color-sage: oklch(0.531 0.051 135.352);
+  /* LinkedIn brand blue — a third-party brand color, kept in sRGB hex (like the
+     language brand colors in lib/language-colors.ts) rather than an OKLCH token. */
+  --color-linkedin: #4a6c8c;
 
   --font-display: var(--font-fraunces), "Iowan Old Style", Georgia, serif;
   --font-sans: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
