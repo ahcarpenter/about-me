@@ -1,5 +1,5 @@
 import { site } from "@/lib/site";
-import type { Repo } from "@/lib/github";
+import type { Repo } from "@/lib/sources/github/events";
 
 const LANGUAGE_COLORS: Record<string, string> = {
   TypeScript: "#3178c6",

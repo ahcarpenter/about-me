@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { stripHtml, tag, truncate } from "@/lib/substack";
+import { stripHtml, tag, truncate } from "./substack";
 
 describe("tag", () => {
   it("extracts inner text of a tag", () => {

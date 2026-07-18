@@ -1,35 +1,18 @@
 import { site } from "@/lib/site";
-import { describeGithubEvent, type GithubEvent, type GithubFeedItem } from "@/lib/github";
+import { timedFetch } from "@/lib/http";
+import { githubHeaders, getJson, resolveToken } from "@/lib/sources/github/client";
+import {
+  describeGithubEvent,
+  type GithubEvent,
+  type GithubFeedItem,
+} from "@/lib/sources/github/events";
 
 const API = "https://api.github.com";
 const EVENTS_URL = `${API}/users/${site.githubUsername}/events/public?per_page=30`;
 const EMPTY_SHA = "0000000000000000000000000000000000000000";
 
-function authHeaders(token?: string): HeadersInit {
-  return {
-    Accept: "application/vnd.github+json",
-    ...(token ? { Authorization: `Bearer ${token}` } : {}),
-  };
-}
-
-async function getJson<T>(url: string, token?: string): Promise<T | undefined> {
-  try {
-    const res = await fetch(url, {
-      signal: AbortSignal.timeout(10_000),
-      headers: authHeaders(token),
-    });
-    if (!res.ok) return undefined;
-    return (await res.json()) as T;
-  } catch {
-    return undefined;
-  }
-}
-
 async function fetchEvents(token?: string): Promise<GithubEvent[]> {
-  const res = await fetch(EVENTS_URL, {
-    signal: AbortSignal.timeout(10_000),
-    headers: authHeaders(token),
-  });
+  const res = await timedFetch(EVENTS_URL, { headers: githubHeaders(token) });
   if (!res.ok) throw new Error(`GitHub events responded ${res.status}`);
   return (await res.json()) as GithubEvent[];
 }
@@ -85,12 +68,7 @@ async function enrich(event: GithubEvent, token?: string): Promise<void> {
  */
 export async function getGithubActivity(count = 10): Promise<GithubFeedItem[]> {
   try {
-    const token = process.env.GITHUB_TOKEN;
-    if (!token) {
-      console.warn(
-        "[github] GITHUB_TOKEN not set — activity uses the unauthenticated API (60 req/hr per-IP limit)",
-      );
-    }
+    const token = resolveToken("activity");
     const events = await fetchEvents(token);
     // Whether an event is shown depends only on its type/action, not on the
     // enriched fields, so pick the visible slice first and enrich just those.

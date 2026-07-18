@@ -3,8 +3,8 @@
 import { useMemo, useState } from "react";
 import { linkedinActivity } from "@/data/linkedin";
 import { recentReads } from "@/data/reading";
-import type { SubstackPost } from "@/lib/substack";
-import type { GithubFeedItem } from "@/lib/github";
+import type { SubstackPost } from "@/lib/sources/substack/substack";
+import type { GithubFeedItem } from "@/lib/sources/github/events";
 import { relativeTime } from "@/lib/format";
 
 type Source = "github" | "linkedin" | "substack" | "reading";
