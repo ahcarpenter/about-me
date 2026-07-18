@@ -5,17 +5,8 @@ import { linkedinActivity } from "@/data/linkedin";
 import { recentReads } from "@/data/reading";
 import type { SubstackPost } from "@/lib/sources/substack/substack";
 import type { GithubFeedItem } from "@/lib/sources/github/events";
+import { buildFeed, type Source } from "@/lib/content/feed";
 import { relativeTime } from "@/lib/format";
-
-type Source = "github" | "linkedin" | "substack" | "reading";
-
-type FeedItem = {
-  source: Source;
-  date: string;
-  title: string;
-  url: string;
-  sample?: boolean;
-};
 
 const SOURCE_META: Record<Source, { label: string; dot: string }> = {
   github: { label: "GitHub", dot: "var(--color-sage)" },
@@ -23,9 +14,6 @@ const SOURCE_META: Record<Source, { label: string; dot: string }> = {
   substack: { label: "Substack", dot: "var(--color-accent)" },
   reading: { label: "Reading", dot: "var(--color-gold)" },
 };
-
-/** Cap on merged feed items; the skeleton matches so content doesn't jump when it lands. */
-const FEED_LIMIT = 14;
 
 const FILTERS: Array<{ key: Source | "all"; label: string }> = [
   { key: "all", label: "Everything" },
@@ -44,36 +32,16 @@ export default function ActivityFeed({
 }) {
   const [filter, setFilter] = useState<Source | "all">("all");
 
-  const items = useMemo(() => {
-    const githubItems: FeedItem[] = githubActivity.map((i) => ({
-      ...i,
-      source: "github" as const,
-    }));
-    const substackItems: FeedItem[] = substackPosts.slice(0, 4).map((p) => ({
-      source: "substack",
-      date: p.date,
-      title: `Published “${p.title}”`,
-      url: p.link,
-    }));
-    const linkedinItems: FeedItem[] = linkedinActivity.map((a) => ({
-      source: "linkedin",
-      date: a.date,
-      title: a.title,
-      url: a.url,
-      sample: a.sample,
-    }));
-    const readingItems: FeedItem[] = recentReads.map((r) => ({
-      source: "reading",
-      date: r.date,
-      title: `Read “${r.title}” by ${r.author}`,
-      url: r.url,
-      sample: r.sample,
-    }));
-    return [...githubItems, ...substackItems, ...linkedinItems, ...readingItems]
-      .filter((i) => i.date)
-      .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
-      .slice(0, FEED_LIMIT);
-  }, [githubActivity, substackPosts]);
+  const items = useMemo(
+    () =>
+      buildFeed({
+        github: githubActivity,
+        substack: substackPosts,
+        linkedin: linkedinActivity,
+        reading: recentReads,
+      }),
+    [githubActivity, substackPosts],
+  );
 
   const visible = filter === "all" ? items : items.filter((i) => i.source === filter);
 
